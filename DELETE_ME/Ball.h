@@ -1,10 +1,12 @@
 #pragma once
 #include "GameEntity.h"
+#include "Boundary.h"
 
 class Ball :
 	public GameEntity
 {
 public:
+	Ball();
 	Ball(float r, Mesh* m, Material* ma);
 	~Ball();
 	float GetRadius();

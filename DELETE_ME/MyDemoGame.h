@@ -1,13 +1,18 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include <vector>
 #include "DirectXGame.h"
-#include "Camera.h"
 #include "GameEntity.h"
-#include "Material.h"
-#include "Ball.h"
+#include <ctime>
+#include <vector>
+#include "Camera.h"
+#include <iostream>
+#include "SimpleShader.h"
+#include <WICTextureLoader.h>
 #include "Boundary.h"
+#include "Ball.h"
+#include "Collisions.h"
+#include "Player.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -28,7 +33,6 @@ struct VertexShaderConstantBufferLayout
 	XMFLOAT4X4 projection;
 };
 
-// Directional light struct for shaders
 struct DirectionalLight
 {
 	XMFLOAT4 AmbientColor;
@@ -56,43 +60,49 @@ public:
 
 private:
 	// Initialization for our "game" demo
-	void CreateGeometryBuffers();
+	void CreateBoundaries();
+	void CreateBall();
+	void CreatePlayer();
 	void LoadShadersAndInputLayout();
 	void InitializeCameraMatrices();
 
 private:
+	// Buffers to hold actual geometry
+	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
 
-	char* assetsPath;
+	// The matrices to go from model space
+	// to screen space
+	XMFLOAT4X4 worldMatrix;
+	XMFLOAT4X4 viewMatrix;
+	XMFLOAT4X4 projectionMatrix;
+
+	Material* mat1;
+	Material* mat2;
+
+	DirectionalLight lightA;
+	DirectionalLight lightB;
 
 	// Keeps track of the old mouse position.  Useful for 
 	// determining how far the mouse moved in a single frame.
 	POINT prevMousePos;
-	bool mouseDown;
 
-	// Main camera
-	Camera* camera;
-
-	// Pointers to Mesh objects
-	std::vector<GameEntity*> entities;
-
-	// Game Objects
-	Ball* ball;
-	std::vector<Boundary*> walls;
-
-	// Meshes
+	//Mesh objects
 	std::vector<Mesh*> meshes;
-	std::vector<Material*> materials;
+
+	//Game objects
+	std::vector<GameEntity> entities;
+
+	//Boundaries
+	std::vector<Boundary> walls;
 	
-	// Shaders
-	SimplePixelShader* pixelShader;
+	Camera cam;
+
 	SimpleVertexShader* vertexShader;
-	ID3D11ShaderResourceView* srv;
+	SimplePixelShader* pixelShader;
 
-	// Sampler State
-	ID3D11SamplerState* samplerState;
-	D3D11_SAMPLER_DESC samplerDesc;
+	Ball ball;
+	Player player;
 
-	// Lights
-	DirectionalLight directionalLight;
-	DirectionalLight secondLight;
+	Collisions collisionManager;
 };

@@ -11,7 +11,7 @@ class GameEntity
 public:
 	// Constructors/Destructors
 	GameEntity(Mesh* _mesh, Material* material);
-	~GameEntity();
+	virtual ~GameEntity();
 
 	// Accessors/Mutators
 	XMFLOAT4X4 GetWorldMatrix();

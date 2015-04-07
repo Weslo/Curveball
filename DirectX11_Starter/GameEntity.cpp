@@ -14,8 +14,6 @@ GameEntity::GameEntity(Mesh* _mesh, Material* _material)
 
 GameEntity::~GameEntity()
 {
-	delete mesh;
-	delete material;
 }
 
 #pragma endregion

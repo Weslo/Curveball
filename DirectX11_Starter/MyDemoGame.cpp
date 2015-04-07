@@ -63,11 +63,19 @@ MyDemoGame::MyDemoGame(HINSTANCE hInstance) : DirectXGame(hInstance)
 
 MyDemoGame::~MyDemoGame()
 {
-
 	delete camera;
-	
+
 	// Delete game entities and the game entities array.
-	for (int i = 0; i < entities.size(); i++) { delete entities[i]; }
+	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
+	entities.clear();
+
+	// Delete meshes and the mesh array.
+	for (std::vector< Mesh* >::iterator it = meshes.begin(); it != meshes.end(); ++it) { delete (*it); }
+	meshes.clear();
+
+	// Delete meshes and the mesh array.
+	for (std::vector< Material* >::iterator it = materials.begin(); it != materials.end(); ++it) { delete (*it); }
+	materials.clear();
 
 	delete pixelShader;
 	delete vertexShader;
@@ -152,12 +160,6 @@ void MyDemoGame::CreateGeometryBuffers()
 
 	ball = new Ball (0.5f, meshes[0], materials[0]);
 	entities.push_back(ball);
-
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[0]->SetPosition(XMFLOAT3(0.0, -5.0f, 0.0f));
-	walls[0]->SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	walls[0]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[0]);
 
 	// Bottom Wall
 	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
