@@ -24,8 +24,6 @@
 #include <Windows.h>
 #include <d3dcompiler.h>
 #include "MyDemoGame.h"
-#include "Vertex.h"
-#include "WICTextureLoader.h"
 
 #pragma region Win32 Entry Point (WinMain)
 
@@ -64,24 +62,7 @@ MyDemoGame::MyDemoGame(HINSTANCE hInstance) : DirectXGame(hInstance)
 MyDemoGame::~MyDemoGame()
 {
 	delete camera;
-
-	// Delete game entities and the game entities array.
-	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
-	entities.clear();
-
-	// Delete meshes and the mesh array.
-	for (std::vector< Mesh* >::iterator it = meshes.begin(); it != meshes.end(); ++it) { delete (*it); }
-	meshes.clear();
-
-	// Delete meshes and the mesh array.
-	for (std::vector< Material* >::iterator it = materials.begin(); it != materials.end(); ++it) { delete (*it); }
-	materials.clear();
-
-	delete pixelShader;
-	delete vertexShader;
-
-	ReleaseMacro(srv);
-	ReleaseMacro(samplerState);
+	delete manager;
 }
 
 #pragma endregion
@@ -96,15 +77,49 @@ bool MyDemoGame::Init()
 	if( !DirectXGame::Init() )
 		return false;
 
-	// Create the necessary DirectX buffers to draw something
-	CreateGeometryBuffers();
+	manager = new GameManager(device, deviceContext);
+
+
+	//Create shaders first
+	manager->CreatePixelShader();
+	manager->CreateVertexShader();
+
+	//Load the textures you want to use
+	manager->CreateResourceView(L"../Assets/checkers.png");
+
+	//Create the sampler state.
+	//Could take U/V/W states later for more options for textures
+	manager->CreateSamplerState();
+
+	//Create materials and meshes that will be used based on previous creation of stuff
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+	manager->CreateMesh("../Assets/sphere.obj");
+	manager->CreateMesh("../Assets/boundary2.obj");
+
+	//Create ball and walls
+	manager->CreateBall(.5f, manager->GetMeshes()[0], manager->GetMaterials()[0]);
+	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(.5f, 1.0f, 1.2f));
+	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
+
+	manager->CreateWall(40, 10, XMFLOAT3(0, -5.0f, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Bottom wall
+	manager->CreateWall(40, 10, XMFLOAT3(-5.0f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Left Wall
+	manager->CreateWall(40, 10, XMFLOAT3(0, 5.0f, 0), XMFLOAT3(0, 0, XM_PI), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Top wall
+	manager->CreateWall(40, 10, XMFLOAT3(5.0f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
+	manager->CreateWall(40, 10, XMFLOAT3(0, 5.0f, 20.0f), XMFLOAT3(-XM_PI / 2, 0, 0), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
+
+	//Now that we have walls, create the collision manager
+	collisionManager = Collisions(manager->GetWalls());
 
 	// Load pixel & vertex shaders, and then create an input layout
 	LoadShadersAndInputLayout();
 
-	// Set up camera-related matrices
-	InitializeCameraMatrices();
+	//Create the camera in here. Pain in the ass to do in game manager
+	camera = new Camera();
+	camera->RecalculateViewMatrix();
+	camera->RecalculateProjectionMatrix(AspectRatio());
 
+
+	//Havent moved to game manager yet, need to finalize structs first
 	directionalLight = DirectionalLight
 	{
 		XMFLOAT4(0, 0, 0.1f, 1),
@@ -120,85 +135,18 @@ bool MyDemoGame::Init()
 	};
 
 
-	pixelShader->SetData(
+	manager->GetPixelShaders()[0]->SetData(
 		"directionalLight",
 		&directionalLight,
 		sizeof(DirectionalLight));
 
-	pixelShader->SetData(
+	manager->GetPixelShaders()[0]->SetData(
 		"secondDirectionalLight",
 		&secondLight,
 		sizeof(DirectionalLight));
 
 	// Successfully initialized
 	return true;
-}
-
-// Creates the vertex and index buffers for a single triangle
-void MyDemoGame::CreateGeometryBuffers()
-{
-	// Create entities
-
-	pixelShader = new SimplePixelShader(device, deviceContext);
-	vertexShader = new SimpleVertexShader(device, deviceContext);
-
-	CreateWICTextureFromFile(device, deviceContext, L"../Assets/checkers.png", 0, &srv);
-
-	// Sampler State
-	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	device->CreateSamplerState(&samplerDesc, &samplerState);
-
-	materials.push_back(new Material(pixelShader, vertexShader, srv, samplerState));
-
-	meshes.push_back(new Mesh("../Assets/sphere.obj", device));
-	meshes.push_back(new Mesh("../Assets/boundary2.obj", device));
-
-	ball = new Ball (0.5f, meshes[0], materials[0]);
-	entities.push_back(ball);
-
-	// Bottom Wall
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[0]->SetPosition(XMFLOAT3(0.0, -5.0f, 0.0f));
-	walls[0]->SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	walls[0]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[0]);
-
-	// Left Wall
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[1]->SetPosition(XMFLOAT3(-5.0f, 0.0f, 0.0f));
-	walls[1]->SetUp(XMFLOAT3(1.0f, 0.0f, 0.0f));
-	walls[1]->SetRotation(XMFLOAT3(0.0f, 0.0f, 3 * XM_PI / 2));
-	walls[1]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[1]);
-
-	// Top Wall
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[2]->SetPosition(XMFLOAT3(0.0f, 5.0f, 0.0f));
-	walls[2]->SetUp(XMFLOAT3(0.0f, -1.0f, 0.0f));
-	walls[2]->SetRotation(XMFLOAT3(0.0f, 0.0f, XM_PI));
-	walls[2]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[2]);
-
-	// Right Wall
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[3]->SetPosition(XMFLOAT3(5.0f, 0.0f, 0.0f));
-	walls[3]->SetUp(XMFLOAT3(-1.0f, 0.0f, 0.0f));
-	walls[3]->SetRotation(XMFLOAT3(0.0f, 0.0f, XM_PI / 2));
-	walls[3]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[3]);
-
-	// Back Wall
-	walls.push_back(new Boundary(40, 10, meshes[1], materials[0]));
-	walls[4]->SetPosition(XMFLOAT3(0.0f, 5.0f, 20.0f));
-	walls[4]->SetUp(XMFLOAT3(0.0f, 0.0f, -1.0f));
-	walls[4]->SetRotation(XMFLOAT3(-XM_PI / 2, 0.0f, 0.0f));
-	walls[4]->SetScale(XMFLOAT3(40.0f, 40.0f, 40.0f));
-	entities.push_back(walls[4]);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -216,13 +164,6 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	};
 }
 
-// Initializes the matrices necessary to represent our 3D camera
-void MyDemoGame::InitializeCameraMatrices()
-{
-	camera = new Camera();
-	camera->RecalculateViewMatrix();
-	camera->RecalculateProjectionMatrix(AspectRatio());
-}
 
 #pragma endregion
 
@@ -246,6 +187,12 @@ void MyDemoGame::OnResize()
 void MyDemoGame::UpdateScene(float dt)
 {
 	camera->Update(dt);
+
+	//Set ball prev position before updating, used for collision detection
+	manager->GetBalls()[0]->SetPrevPos(manager->GetBalls()[0]->GetPosition());
+	manager->GetBalls()[0]->Update(dt);
+
+	collisionManager.DetectCollisions(manager->GetBalls()[0], dt);
 }
 
 // Clear the screen, redraw everything, present
@@ -271,26 +218,26 @@ void MyDemoGame::DrawScene()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Iterate through each mesh to perform draw operations on each
-	for (int i = 0; i < entities.size(); i++)
+	for (int i = 0; i < manager->GetGameEntities().size(); i++)
 	{
 
 		// Copy CPU-side data to a single CPU-side structure
 		//  - Allows us to send the data to the GPU buffer in one step
 		//  - Do this PER OBJECT, before drawing it
-		entities[i]->RecalculateWorldMatrix();
-		entities[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", entities[i]->GetWorldMatrix());
-		entities[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
-		entities[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+		manager->GetGameEntities()[i]->RecalculateWorldMatrix();
+		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetGameEntities()[i]->GetWorldMatrix());
+		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
+		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
 
-		entities[i]->GetMaterial()->GetVertexShader()->SetShader();
+		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
-		pixelShader->SetShaderResourceView("diffuseTexture", srv);
-		pixelShader->SetSamplerState("basicSampler", samplerState);
+		manager->GetPixelShaders()[0]->SetShaderResourceView("diffuseTexture", manager->GetResourceViews()[0]);
+		manager->GetPixelShaders()[0]->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
 
-		entities[i]->GetMaterial()->GetPixelShader()->SetShader();
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
 
 		// Draw the mesh
-		entities[i]->Draw(deviceContext);
+		manager->GetGameEntities()[i]->Draw(deviceContext);
 	}
 
 	// Present the buffer

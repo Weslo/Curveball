@@ -22,7 +22,6 @@ private:
 	float mass;
 	XMFLOAT3 velocity;
 	XMFLOAT3 angularVelocity;
-
 	XMFLOAT3 prevPosition;
 };
 

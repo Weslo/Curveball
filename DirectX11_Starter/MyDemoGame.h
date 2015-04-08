@@ -1,13 +1,9 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include <vector>
 #include "DirectXGame.h"
-#include "Camera.h"
-#include "GameEntity.h"
-#include "Material.h"
-#include "Ball.h"
-#include "Boundary.h"
+#include "GameManager.h"
+#include "Vertex.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -62,6 +58,9 @@ private:
 
 private:
 
+	GameManager* manager;
+	Collisions collisionManager;
+
 	char* assetsPath;
 
 	// Keeps track of the old mouse position.  Useful for 
@@ -71,26 +70,6 @@ private:
 
 	// Main camera
 	Camera* camera;
-
-	// Pointers to Mesh objects
-	std::vector<GameEntity*> entities;
-
-	// Game Objects
-	Ball* ball;
-	std::vector<Boundary*> walls;
-
-	// Meshes
-	std::vector<Mesh*> meshes;
-	std::vector<Material*> materials;
-	
-	// Shaders
-	SimplePixelShader* pixelShader;
-	SimpleVertexShader* vertexShader;
-	ID3D11ShaderResourceView* srv;
-
-	// Sampler State
-	ID3D11SamplerState* samplerState;
-	D3D11_SAMPLER_DESC samplerDesc;
 
 	// Lights
 	DirectionalLight directionalLight;

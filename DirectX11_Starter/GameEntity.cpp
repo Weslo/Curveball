@@ -42,9 +42,9 @@ void GameEntity::RecalculateWorldMatrix()
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(transformationMatrix));
 }
 
-XMVECTOR GameEntity::GetPosition()
+XMFLOAT3 GameEntity::GetPosition()
 {
-	return XMLoadFloat3(&position);
+	return position;
 }
 
 void GameEntity::SetPosition(XMFLOAT3 _position)
@@ -62,15 +62,16 @@ void GameEntity::Move(float x, float y, float z)
 	SetPosition(position.x + x, position.y + y, position.z + z);
 }
 
-XMVECTOR GameEntity::GetRotation()
+XMFLOAT3 GameEntity::GetRotation()
 {
-	return XMLoadFloat3(&rotation);
+	return rotation;
 }
 
+/*
 XMVECTOR GameEntity::GetRotationQuaternion()
 {
 	return XMQuaternionRotationRollPitchYawFromVector(GetRotation());
-}
+}*/
 
 void GameEntity::SetRotation(XMFLOAT3 _rotation)
 {
@@ -87,9 +88,9 @@ void GameEntity::Rotate(float x, float y, float z)
 	SetRotation(rotation.x + x, rotation.y + y, rotation.z + z);
 }
 
-XMVECTOR GameEntity::GetScale()
+XMFLOAT3 GameEntity::GetScale()
 {
-	return XMLoadFloat3(&scale);
+	return scale;
 }
 
 void GameEntity::SetScale(XMFLOAT3 _scale)

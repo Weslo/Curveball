@@ -71,7 +71,9 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Boundary.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MyDemoGame.cpp" />
@@ -84,7 +86,9 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Boundary.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collisions.h" />
     <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MyDemoGame.h" />

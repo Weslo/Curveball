@@ -14,7 +14,6 @@ class Mesh
 {
 public:
 	// Constructors/Destructors
-	Mesh(Vertex vertices[], UINT vertexCount, UINT indices[], UINT indexCount, ID3D11Device* device);
 	Mesh(char* file, ID3D11Device* device);
 	~Mesh();
 
