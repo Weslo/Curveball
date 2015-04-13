@@ -8,6 +8,8 @@ Player::Player(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma) : GameEnti
 
 	height = h;
 	width = w;
+
+	up = XMFLOAT3(0, 0, 1.0f);
 }
 
 Player::~Player()
@@ -17,6 +19,21 @@ Player::~Player()
 XMFLOAT3 Player::GetVelocity()
 {
 	return velocity;
+}
+
+XMFLOAT3 Player::GetUp()
+{
+	return up;
+}
+
+float Player::GetWidth()
+{
+	return width;
+}
+
+float Player::GetHeight()
+{
+	return height;
 }
 
 void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window)

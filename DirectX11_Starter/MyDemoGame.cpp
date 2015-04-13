@@ -98,7 +98,7 @@ bool MyDemoGame::Init()
 
 	//Create ball and walls
 	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[0]);
-	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(.5f, 1.0f, 1.2f));
+	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(0, 0, -1.2f));
 	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
 	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
 
@@ -200,7 +200,7 @@ void MyDemoGame::UpdateScene(float dt)
 
 	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight));
 
-	collisionManager.DetectCollisions(manager->GetBalls()[0], dt);
+	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 }
 
 // Clear the screen, redraw everything, present
