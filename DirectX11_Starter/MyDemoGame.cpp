@@ -97,15 +97,21 @@ bool MyDemoGame::Init()
 	manager->CreateMesh("../Assets/boundary2.obj");
 
 	//Create ball and walls
-	manager->CreateBall(.5f, manager->GetMeshes()[0], manager->GetMaterials()[0]);
+	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[0]);
 	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(.5f, 1.0f, 1.2f));
 	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
+	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
 
-	manager->CreateWall(40, 10, XMFLOAT3(0, -5.0f, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Bottom wall
-	manager->CreateWall(40, 10, XMFLOAT3(-5.0f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Left Wall
-	manager->CreateWall(40, 10, XMFLOAT3(0, 5.0f, 0), XMFLOAT3(0, 0, XM_PI), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Top wall
-	manager->CreateWall(40, 10, XMFLOAT3(5.0f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
-	manager->CreateWall(40, 10, XMFLOAT3(0, 5.0f, 20.0f), XMFLOAT3(-XM_PI / 2, 0, 0), XMFLOAT3(40.0f, 40.0f, 40.0f), XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
+	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
+
+	manager->CreateWall(20, 5, XMFLOAT3(0, -2.5f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Bottom wall
+	manager->CreateWall(20, 5, XMFLOAT3(-2.5f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Left Wall
+	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Top wall
+	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
+	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
+
+	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[1], manager->GetMaterials()[0]);
+	manager->GetPlayer()->SetRotation(0, XM_PI/2, -XM_PI/2);
 
 	//Now that we have walls, create the collision manager
 	collisionManager = Collisions(manager->GetWalls());
@@ -192,6 +198,8 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetBalls()[0]->SetPrevPos(manager->GetBalls()[0]->GetPosition());
 	manager->GetBalls()[0]->Update(dt);
 
+	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight));
+
 	collisionManager.DetectCollisions(manager->GetBalls()[0], dt);
 }
 
@@ -218,7 +226,7 @@ void MyDemoGame::DrawScene()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Iterate through each mesh to perform draw operations on each
-	for (int i = 0; i < manager->GetGameEntities().size(); i++)
+	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)
 	{
 
 		// Copy CPU-side data to a single CPU-side structure
@@ -273,10 +281,7 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 	LONG deltaX = x - prevMousePos.x;
 	LONG deltaY = y - prevMousePos.y;
 
-	if (mouseDown)
-	{
-		//entities[0]->Rotate(-deltaY * 0.01f, -deltaX * 0.01f, 0);
-	}
+	mousePos = XMFLOAT3((float)x, (float)y, 0);
 
 	prevMousePos.x = x;
 	prevMousePos.y = y;

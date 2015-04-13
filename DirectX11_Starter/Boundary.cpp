@@ -17,6 +17,16 @@ XMFLOAT3 Boundary::GetUp()
 	return up;
 }
 
+int Boundary::GetLength()
+{
+	return length;
+}
+
+int Boundary::GetWidth()
+{
+	return width;
+}
+
 void Boundary::SetUp(XMFLOAT3 u)
 {
 	up = u;

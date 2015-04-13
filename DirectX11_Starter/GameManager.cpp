@@ -26,12 +26,12 @@ GameManager::~GameManager()
 	for (std::vector< SimpleVertexShader* >::iterator it = vertexShaders.begin(); it != vertexShaders.end(); ++it) { delete (*it); }
 	vertexShaders.clear();
 
-	for (int i = 0; i < resourceViews.size(); i++)
+	for (unsigned int i = 0; i < resourceViews.size(); i++)
 	{
 		ReleaseMacro(resourceViews[i]);
 	}
 
-	for (int i = 0; i < samplerStates.size(); i++)
+	for (unsigned int i = 0; i < samplerStates.size(); i++)
 	{
 		ReleaseMacro(samplerStates[i]);
 	}
@@ -89,6 +89,11 @@ std::vector<D3D11_SAMPLER_DESC> GameManager::GetSamplerDescs()
 std::vector<GameEntity*> GameManager::GetGameEntities()
 {
 	return entities;
+}
+
+Player* GameManager::GetPlayer()
+{
+	return player;
 }
 #pragma endregion
 
@@ -165,4 +170,10 @@ void GameManager::CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, X
 	walls.push_back(temp);
 
 	entities.push_back(walls[walls.size() - 1]);
+}
+
+void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma)
+{
+	player = new Player(pos, w, h, m, ma);
+	entities.push_back(player);
 }

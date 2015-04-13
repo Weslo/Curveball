@@ -7,6 +7,8 @@ public:
 	Boundary(int l, int w, Mesh* m, Material* ma);
 	~Boundary();
 	XMFLOAT3 GetUp();
+	int GetLength();
+	int GetWidth();
 	void SetUp(XMFLOAT3 u);
 
 private:

@@ -83,11 +83,6 @@ void GameEntity::SetRotation(float x, float y, float z)
 	rotation = XMFLOAT3(x, y, z);
 }
 
-void GameEntity::Rotate(float x, float y, float z)
-{
-	SetRotation(rotation.x + x, rotation.y + y, rotation.z + z);
-}
-
 XMFLOAT3 GameEntity::GetScale()
 {
 	return scale;
