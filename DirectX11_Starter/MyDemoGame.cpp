@@ -202,6 +202,8 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight));
 
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
+
+	manager->GetGameController()->CheckBounds();
 }
 
 // Clear the screen, redraw everything, present

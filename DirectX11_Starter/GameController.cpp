@@ -43,3 +43,12 @@ void GameController::Serve()
 		serving = false;
 	}
 }
+
+void GameController::CheckBounds()
+{
+	if (ball->GetPosition().z - ball->GetRadius() / 2 < player->GetPosition().z)
+	{
+		//just reset the court for now, this will do something with lives later
+		ResetCourt();
+	}
+}

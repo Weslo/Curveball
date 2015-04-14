@@ -14,6 +14,7 @@ public:
 
 	void ResetCourt();
 	void Serve();
+	void CheckBounds();
 
 private:
 
