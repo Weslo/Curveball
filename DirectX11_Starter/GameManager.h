@@ -10,6 +10,7 @@
 #include <WICTextureLoader.h>
 #include <vector>
 #include "Player.h"
+#include "GameController.h"
 
 class GameManager
 {
@@ -30,6 +31,7 @@ public:
 	void CreateResourceView(const wchar_t*);
 	void CreateSamplerState();
 	void CreateCamera(int w, int h);
+	void CreateGameController(Ball* ball, Player* player);
 
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();
@@ -43,12 +45,16 @@ public:
 	std::vector<ID3D11SamplerState*> GetSamplerStates();
 	std::vector<D3D11_SAMPLER_DESC> GetSamplerDescs();
 	std::vector<GameEntity*> GetGameEntities();
+	GameController* GetGameController();
 
 private:
 
 	//vectors holding everything we could want to create
 	//Even if we think we will only have one, make it a vector
 	//Prevents redoing crap later if we have new ideas
+
+	//GameController manages game logic, needs ref to ball, player, and ai player.
+	GameController* gameController;
 
 	Player* player;
 	std::vector<Ball*> balls;

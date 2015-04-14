@@ -11,6 +11,7 @@ public:
 	XMFLOAT3 GetPrevPos();
 	void SetPrevPos(XMFLOAT3 p);
 	void SetVelocity(XMFLOAT3 v);
+	void ApplyVelocity(XMFLOAT3 v);
 	XMFLOAT3 GetVelocity();
 	XMFLOAT3 GetAngularVelocity();
 	void SetAngularVelocity(XMFLOAT3);

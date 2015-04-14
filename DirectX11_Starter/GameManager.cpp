@@ -38,6 +38,8 @@ GameManager::~GameManager()
 
 	for (std::vector< SimpleVertexShader* >::iterator it = vertexShaders.begin(); it != vertexShaders.end(); ++it) { delete (*it); }
 	vertexShaders.clear();
+
+	delete gameController;
 }
 
 #pragma region Getters
@@ -94,6 +96,11 @@ std::vector<GameEntity*> GameManager::GetGameEntities()
 Player* GameManager::GetPlayer()
 {
 	return player;
+}
+
+GameController* GameManager::GetGameController()
+{
+	return gameController;
 }
 #pragma endregion
 
@@ -176,4 +183,9 @@ void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material
 {
 	player = new Player(pos, w, h, m, ma);
 	entities.push_back(player);
+}
+
+void GameManager::CreateGameController(Ball* ball, Player* player)
+{
+	gameController = new GameController(ball, player);
 }

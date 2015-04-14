@@ -131,7 +131,7 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w)
 	XMVECTOR v = bVel + XMVector3Cross(R, bAVel);
 
 	//Normally gets divided by a value, but since we have a perfect sphere it breaks the equation. Don't need it for now (may need later)
-	float numerator = -(1.01f + 1.0f) * XMVectorGetX(XMVector3Dot(v, wUp));
+	float numerator = -(1.0f + 1.0f) * XMVectorGetX(XMVector3Dot(v, wUp));
 
 	//Impulse to apply to the ball
 	XMVECTOR J = wUp * numerator;
@@ -172,7 +172,7 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p)
 	XMVECTOR v = bVel + XMVector3Cross(R, bAVel);
 
 	//Normally gets divided by a value, but since we have a perfect sphere it breaks the equation. Don't need it for now (may need later)
-	float numerator = -(1.01f + 1.0f) * XMVectorGetX(XMVector3Dot(v, wUp));
+	float numerator = -(1.0f + 1.0f) * XMVectorGetX(XMVector3Dot(v, wUp));
 
 	//Impulse to apply to the ball
 	XMVECTOR J = wUp * numerator;

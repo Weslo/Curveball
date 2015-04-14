@@ -27,6 +27,11 @@ void Ball::SetVelocity(XMFLOAT3 v)
 	velocity = v;
 }
 
+void Ball::ApplyVelocity(XMFLOAT3 v)
+{
+	velocity = XMFLOAT3(velocity.x + v.x, velocity.y + v.y, velocity.z + v.z);
+}
+
 void Ball::SetAngularVelocity(XMFLOAT3 v)
 {
 	angularVelocity = v;

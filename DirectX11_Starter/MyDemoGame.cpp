@@ -113,6 +113,8 @@ bool MyDemoGame::Init()
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[1], manager->GetMaterials()[0]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, -XM_PI/2);
 
+	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
+
 	//Now that we have walls, create the collision manager
 	collisionManager = Collisions(manager->GetWalls());
 
@@ -123,7 +125,6 @@ bool MyDemoGame::Init()
 	camera = new Camera();
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
-
 
 	//Havent moved to game manager yet, need to finalize structs first
 	directionalLight = DirectionalLight
@@ -272,6 +273,7 @@ void MyDemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 
 void MyDemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 {
+	manager->GetGameController()->Serve();
 	mouseDown = false;
 	ReleaseCapture();
 }
