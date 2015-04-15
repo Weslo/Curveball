@@ -4,4 +4,10 @@ Refraction
 Depth line on walls
 Shadow Casting
 
+
+Rotate paddle to correct plane
+	Match hitboxes to new paddle (or stretch paddle as needed)
+	Texture Paddle
+Fix textures on ball (applying incorrectly in engine, but correctly in Maya)
+
 Add/remove stuff as necessary as work gets done

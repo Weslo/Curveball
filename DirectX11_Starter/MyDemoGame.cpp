@@ -86,6 +86,8 @@ bool MyDemoGame::Init()
 
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
+	manager->CreateResourceView(L"../Assets/ballTex.png");
+	manager->CreateResourceView(L"../Assets/paddle.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
@@ -96,12 +98,17 @@ bool MyDemoGame::Init()
 
 	//walls
 	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+	//ball
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
+	//paddle
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/sphere.obj");
 	manager->CreateMesh("../Assets/boundary2.obj");
+	manager->CreateMesh("../Assets/paddle.obj");
 
 	//Create ball and walls
-	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[0]);
+	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[1]);
 	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(0, 0, -1.2f));
 	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
 	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
@@ -114,7 +121,7 @@ bool MyDemoGame::Init()
 	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
 	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
 
-	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[1], manager->GetMaterials()[0]);
+	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, -XM_PI/2);
 
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
@@ -142,7 +149,7 @@ bool MyDemoGame::Init()
 	{
 		XMFLOAT4(0.1f, 0.1f, 0.1f, 1),
 		XMFLOAT4(0.3, 0.3, 0.3, 1),
-		XMFLOAT3(0.2f, 0.2f, 1)
+		XMFLOAT3(0, 0.2f, 1)
 	};
 
 
@@ -246,7 +253,7 @@ void MyDemoGame::DrawScene()
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
-		manager->GetPixelShaders()[0]->SetShaderResourceView("diffuseTexture", manager->GetResourceViews()[0]);
+		manager->GetPixelShaders()[0]->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
 		manager->GetPixelShaders()[0]->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
