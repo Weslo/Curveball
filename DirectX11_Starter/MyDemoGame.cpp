@@ -85,14 +85,18 @@ bool MyDemoGame::Init()
 	manager->CreateVertexShader();
 
 	//Load the textures you want to use
-	manager->CreateResourceView(L"../Assets/checkers.png");
+	manager->CreateResourceView(L"../Assets/wall.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
 	manager->CreateSamplerState();
 
+
 	//Create materials and meshes that will be used based on previous creation of stuff
+
+	//walls
 	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+
 	manager->CreateMesh("../Assets/sphere.obj");
 	manager->CreateMesh("../Assets/boundary2.obj");
 
@@ -129,16 +133,16 @@ bool MyDemoGame::Init()
 	//Havent moved to game manager yet, need to finalize structs first
 	directionalLight = DirectionalLight
 	{
-		XMFLOAT4(0, 0, 0.1f, 1),
-		XMFLOAT4(0, 0, 1, 1),
+		XMFLOAT4(0, 0, 0, 1),
+		XMFLOAT4(0, 0, 0, 1),
 		XMFLOAT3(1, 0, 1)
 	};
 
 	secondLight = DirectionalLight
 	{
-		XMFLOAT4(0.1f, 0, 0, 1),
-		XMFLOAT4(1, 0, 0, 1),
-		XMFLOAT3(-1, 0, 1)
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1),
+		XMFLOAT4(0.3, 0.3, 0.3, 1),
+		XMFLOAT3(0.2f, 0.2f, 1)
 	};
 
 

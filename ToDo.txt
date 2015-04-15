@@ -1,0 +1,7 @@
+Normal Maps
+Reflection
+Refraction
+Depth line on walls
+Shadow Casting
+
+Add/remove stuff as necessary as work gets done
