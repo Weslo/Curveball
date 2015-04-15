@@ -88,6 +88,7 @@ bool MyDemoGame::Init()
 	manager->CreateResourceView(L"../Assets/wall.png");
 	manager->CreateResourceView(L"../Assets/ballTex.png");
 	manager->CreateResourceView(L"../Assets/paddle.png");
+	manager->CreateResourceView(L"../Assets/blueasfuck.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
@@ -102,10 +103,13 @@ bool MyDemoGame::Init()
 	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
 	//paddle
 	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
+	//TEMPORARY
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[3], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/sphere.obj");
 	manager->CreateMesh("../Assets/boundary2.obj");
 	manager->CreateMesh("../Assets/paddle.obj");
+	manager->CreateMesh("../Assets/depthSketch.obj");
 
 	//Create ball and walls
 	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[1]);
@@ -124,6 +128,12 @@ bool MyDemoGame::Init()
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
 
+	//TEMPORARY
+	manager->CreateDepthSketch(XMFLOAT3(0, -2.45f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, 0), manager->GetMeshes()[3], manager->GetMaterials()[3]);//bottom
+	manager->CreateDepthSketch(XMFLOAT3(-2.45f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, -XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+	manager->CreateDepthSketch(XMFLOAT3(0, 2.45f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, XM_PI), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+	manager->CreateDepthSketch(XMFLOAT3(2.45f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
 
 	//Now that we have walls, create the collision manager
@@ -140,16 +150,16 @@ bool MyDemoGame::Init()
 	//Havent moved to game manager yet, need to finalize structs first
 	directionalLight = DirectionalLight
 	{
-		XMFLOAT4(0, 0, 0, 1),
-		XMFLOAT4(0, 0, 0, 1),
-		XMFLOAT3(1, 0, 1)
+		XMFLOAT4(.2f, .2f, .2f, 1),
+		XMFLOAT4(.6f, .6f, .6f, 1),
+		XMFLOAT3(.5f, .5f, .5f)
 	};
 
 	secondLight = DirectionalLight
 	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1),
-		XMFLOAT4(0.3, 0.3, 0.3, 1),
-		XMFLOAT3(0, 0.2f, 1)
+		XMFLOAT4(0.2f, 0.2f, 0.2f, 1),
+		XMFLOAT4(0.6f, 0.6f, 0.6f, 1),
+		XMFLOAT3(-.5f, -.5f, -.5f)
 	};
 
 
@@ -215,6 +225,12 @@ void MyDemoGame::UpdateScene(float dt)
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 
 	manager->GetGameController()->CheckBounds();
+
+	//TEMPORARY
+	for (int i = 0; i < manager->GetDepthSketches().size(); i++)
+	{
+		manager->GetDepthSketches()[i]->SetPosition(manager->GetDepthSketches()[i]->GetPosition().x, manager->GetDepthSketches()[i]->GetPosition().y, manager->GetBalls()[0]->GetPosition().z);
+	}
 }
 
 // Clear the screen, redraw everything, present

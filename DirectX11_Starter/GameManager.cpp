@@ -189,3 +189,18 @@ void GameManager::CreateGameController(Ball* ball, Player* player)
 {
 	gameController = new GameController(ball, player);
 }
+
+//TEMP AS FUCK BOYS
+void GameManager::CreateDepthSketch(XMFLOAT3 pos, XMFLOAT3 rot, Mesh* m, Material* ma)
+{
+	depthSketches.push_back(new GameEntity(m, ma));
+	depthSketches[depthSketches.size() - 1]->SetPosition(pos);
+	depthSketches[depthSketches.size() - 1]->SetRotation(rot);
+
+	entities.push_back(depthSketches[depthSketches.size() - 1]);
+}
+
+std::vector<GameEntity*> GameManager::GetDepthSketches()
+{
+	return depthSketches;
+}

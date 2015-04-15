@@ -33,6 +33,9 @@ public:
 	void CreateCamera(int w, int h);
 	void CreateGameController(Ball* ball, Player* player);
 
+	//TEMPORARY
+	void CreateDepthSketch(XMFLOAT3 pos, XMFLOAT3 rot, Mesh* m, Material* ma);
+
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();
 	std::vector<Ball*> GetBalls();
@@ -46,6 +49,9 @@ public:
 	std::vector<D3D11_SAMPLER_DESC> GetSamplerDescs();
 	std::vector<GameEntity*> GetGameEntities();
 	GameController* GetGameController();
+
+	//TEMPORARY
+	std::vector<GameEntity*> GetDepthSketches();
 
 private:
 
@@ -69,6 +75,10 @@ private:
 	std::vector<ID3D11ShaderResourceView*> resourceViews;
 	std::vector<ID3D11SamplerState*> samplerStates;
 	std::vector<D3D11_SAMPLER_DESC> samplerDescs;
+
+
+	//TEMPORARY
+	std::vector<GameEntity*> depthSketches;
 
 	ID3D11Device* device;
 	ID3D11DeviceContext* deviceContext;
