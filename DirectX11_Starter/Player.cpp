@@ -57,5 +57,6 @@ void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window)
 
 	position.y = -percent;
 
+	velocity = XMFLOAT3(position.x - previousPos.x, position.y - previousPos.y, position.z - previousPos.z);
 	previousPos = position;
 }

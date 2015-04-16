@@ -181,7 +181,8 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p)
 	v = bVel + J;
 
 	//The new angular velocity based on impulse and moment of inertia
-	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I;
+	XMVECTOR playerVelocity = XMLoadFloat3(&p->GetVelocity());
+	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I - playerVelocity*3;
 
 	//Set the new velocities
 	XMFLOAT3 newVel = XMFLOAT3(0, 0, 0);
