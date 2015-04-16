@@ -11,7 +11,7 @@ public:
 	XMFLOAT3 GetUp();
 	float GetWidth();
 	float GetHeight();
-	void Update(XMFLOAT3 mPos, float w, XMFLOAT2 window);
+	void Update(XMFLOAT3 mPos, float w, XMFLOAT2 window, float dt);
 
 private:
 	XMFLOAT3 velocity;

@@ -20,6 +20,7 @@ private:
 
 	XMVECTOR NearestPointOnSphere(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos);
 	XMVECTOR NearestPointOnPlane(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos);
+	XMVECTOR NearestPointOnPlayer(Ball* b, Player* p, XMVECTOR bPos);
 	void AdvanceFrame();
 	void ReflectBallWall(Ball* b, Boundary* w);
 	void ReflectBallPlayer(Ball* b, Player* p);

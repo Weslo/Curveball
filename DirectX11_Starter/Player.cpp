@@ -36,7 +36,7 @@ float Player::GetHeight()
 	return height;
 }
 
-void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window)
+void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window, float dt)
 {	
 	//w is thw width of the wall
 	//We know the size of the tunnel holding the paddle at all times
@@ -57,6 +57,6 @@ void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window)
 
 	position.y = -percent;
 
-	velocity = XMFLOAT3(position.x - previousPos.x, position.y - previousPos.y, position.z - previousPos.z);
+	velocity = XMFLOAT3((position.x - previousPos.x) / dt, (position.y - previousPos.y) / dt, (position.z - previousPos.z) / dt);
 	previousPos = position;
 }

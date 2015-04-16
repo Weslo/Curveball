@@ -40,6 +40,8 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		//If the length of the difference is less than the radius, collision happened. Also need to check if it went through the wall
 		if (abs(XMVectorGetX(dif)) < b->GetRadius())
 		{
+			XMVECTOR nearestPt = NearestPointOnPlane(b, walls[i], bPos, wPos);
+
 			//Collision was found, respond by moving the ball to the closest point inside the plane and reflecting it
 			XMVECTOR prevP = XMLoadFloat3(&b->GetPrevPos());
 
@@ -74,6 +76,22 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 
 	if (dist_squared > 0)
 	{
+		//Collision was found, respond by moving the ball to the closest point inside the plane and reflecting it
+		XMVECTOR nearestPt = NearestPointOnPlayer(b, p, bPos);
+
+		XMVECTOR prevP = XMLoadFloat3(&b->GetPrevPos());
+
+		//Store radius as an XMVector to multiply by
+		XMFLOAT3 radius = XMFLOAT3(b->GetRadius(), b->GetRadius(), b->GetRadius());
+		XMVECTOR r = XMLoadFloat3(&radius);
+
+		//r is now strictly in the direction the position needs to move
+		r = XMVectorMultiply(r, XMLoadFloat3(&p->GetUp()));
+
+		//Add the radius to the nearest point to scale the ball in the correct direction
+		prevP = nearestPt + r;
+
+		//Reflect the ball
 		ReflectBallPlayer(b, p);
 	}
 }
@@ -106,6 +124,19 @@ XMVECTOR Collisions::NearestPointOnPlane(Ball* b, Boundary* w, XMVECTOR bPos, XM
 	XMVECTOR axisWallPos = wPos * XMLoadFloat3(&w->GetUp());
 
 	axisBallPos = axisWallPos - axisBallPos;
+
+	bPos += axisBallPos;
+
+	return bPos;
+}
+
+//Return the closest 
+XMVECTOR Collisions::NearestPointOnPlayer(Ball* b, Player* p, XMVECTOR bPos)
+{
+	XMVECTOR axisBallPos = bPos * XMLoadFloat3(&p->GetUp());
+	XMVECTOR axisPlayerPos = XMLoadFloat3(&p->GetPosition()) * XMLoadFloat3(&p->GetUp());
+
+	axisBallPos = axisPlayerPos - axisBallPos;
 
 	bPos += axisBallPos;
 
@@ -160,29 +191,30 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p)
 	XMVECTOR bVel = XMLoadFloat3(&b->GetVelocity());
 	XMVECTOR bAVel = XMLoadFloat3(&b->GetAngularVelocity());
 	XMVECTOR bPos = XMLoadFloat3(&b->GetPosition());
-	XMVECTOR wUp = XMLoadFloat3(&p->GetUp());
+
+	XMVECTOR pUp = XMLoadFloat3(&p->GetUp());
 
 	//Moment of inertia for the ball
 	float I = .4f * b->GetRadius() * b->GetRadius();
 
 	//Get the radius in the direction of the wall up vector
-	XMVECTOR R = XMVectorMultiply(wUp, XMLoadFloat3(&XMFLOAT3(-b->GetRadius(), -b->GetRadius(), -b->GetRadius())));
+	XMVECTOR R = XMVectorMultiply(pUp, XMLoadFloat3(&XMFLOAT3(-b->GetRadius(), -b->GetRadius(), -b->GetRadius())));
 
 	//adjusted velocity based on the previous vector and angular velocity
 	XMVECTOR v = bVel + XMVector3Cross(R, bAVel);
 
 	//Normally gets divided by a value, but since we have a perfect sphere it breaks the equation. Don't need it for now (may need later)
-	float numerator = -(1.0f + 1.0f) * XMVectorGetX(XMVector3Dot(v, wUp));
+	float numerator = -(1.0f + 1.0f) * XMVectorGetX(XMVector3Dot(v, pUp));
 
 	//Impulse to apply to the ball
-	XMVECTOR J = wUp * numerator;
+	XMVECTOR J = pUp * numerator;
 
 	//Add the impulse to the velocity
 	v = bVel + J;
 
 	//The new angular velocity based on impulse and moment of inertia
 	XMVECTOR playerVelocity = XMLoadFloat3(&p->GetVelocity());
-	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I - playerVelocity*3;
+	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I - playerVelocity/10;
 
 	//Set the new velocities
 	XMFLOAT3 newVel = XMFLOAT3(0, 0, 0);

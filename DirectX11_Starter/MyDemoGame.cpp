@@ -125,14 +125,14 @@ bool MyDemoGame::Init()
 	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
 	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
 
-	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1, .25, manager->GetMeshes()[2], manager->GetMaterials()[2]);
+	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
 
 	//TEMPORARY
-	manager->CreateDepthSketch(XMFLOAT3(0, -2.45f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, 0), manager->GetMeshes()[3], manager->GetMaterials()[3]);//bottom
-	manager->CreateDepthSketch(XMFLOAT3(-2.45f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, -XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
-	manager->CreateDepthSketch(XMFLOAT3(0, 2.45f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, XM_PI), manager->GetMeshes()[3], manager->GetMaterials()[3]);
-	manager->CreateDepthSketch(XMFLOAT3(2.45f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+	manager->CreateDepthSketch(XMFLOAT3(0, -2.499f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, 0), manager->GetMeshes()[3], manager->GetMaterials()[3]);//bottom
+	manager->CreateDepthSketch(XMFLOAT3(-2.499f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, -XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+	manager->CreateDepthSketch(XMFLOAT3(0, 2.499f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, XM_PI), manager->GetMeshes()[3], manager->GetMaterials()[3]);
+	manager->CreateDepthSketch(XMFLOAT3(2.499f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
 
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
 
@@ -220,7 +220,7 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetBalls()[0]->SetPrevPos(manager->GetBalls()[0]->GetPosition());
 	manager->GetBalls()[0]->Update(dt);
 
-	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight));
+	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight), dt);
 
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 
