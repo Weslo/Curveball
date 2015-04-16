@@ -25,7 +25,7 @@ public:
 	void CreateBall(float r, Mesh*, Material*);
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
-	void CreateMaterial(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreateMaterial(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn);
 	void CreatePixelShader();
 	void CreateVertexShader();
 	void CreateResourceView(const wchar_t*);

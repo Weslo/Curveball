@@ -6,8 +6,6 @@ Material::Material(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderRe
 	vertexShader = vs;
 	resourceView = rv;
 	samplerState = ss;
-	pixelShader->LoadShaderFile(L"PixelShader.cso");
-	vertexShader->LoadShaderFile(L"VertexShader.cso");
 }
 
 Material::~Material()

@@ -98,13 +98,13 @@ bool MyDemoGame::Init()
 	//Create materials and meshes that will be used based on previous creation of stuff
 
 	//walls
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
 	//ball
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
 	//paddle
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
 	//TEMPORARY
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[3], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[3], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
 
 	manager->CreateMesh("../Assets/sphere.obj");
 	manager->CreateMesh("../Assets/boundary2.obj");

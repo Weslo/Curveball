@@ -148,9 +148,11 @@ void GameManager::CreateSamplerState()
 }
 
 //Create material given shaders to use and texture/sampler
-void GameManager::CreateMaterial(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+void GameManager::CreateMaterial(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
 {
 	materials.push_back(new Material(ps, vs, rv, ss));
+	materials[materials.size() - 1]->GetPixelShader()->LoadShaderFile(psn);
+	materials[materials.size() - 1]->GetVertexShader()->LoadShaderFile(vsn);
 }
 
 //Create mesh from file
