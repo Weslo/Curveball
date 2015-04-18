@@ -1,6 +1,6 @@
 #include "Material.h"
 
-Material::Material(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+Material::Material(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
 {
 	pixelShader = ps;
 	vertexShader = vs;

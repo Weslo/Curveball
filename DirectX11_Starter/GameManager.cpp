@@ -148,9 +148,9 @@ void GameManager::CreateSamplerState()
 }
 
 //Create material given shaders to use and texture/sampler
-void GameManager::CreateMaterial(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
+void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
 {
-	materials.push_back(new Material(ps, vs, rv, ss));
+	materials.push_back(new Material(vs, ps, rv, ss));
 	materials[materials.size() - 1]->GetPixelShader()->LoadShaderFile(psn);
 	materials[materials.size() - 1]->GetVertexShader()->LoadShaderFile(vsn);
 }
@@ -192,19 +192,4 @@ void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material
 void GameManager::CreateGameController(Ball* ball, Player* player)
 {
 	gameController = new GameController(ball, player);
-}
-
-//TEMP AS FUCK BOYS
-void GameManager::CreateDepthSketch(XMFLOAT3 pos, XMFLOAT3 rot, Mesh* m, Material* ma)
-{
-	depthSketches.push_back(new GameEntity(m, ma));
-	depthSketches[depthSketches.size() - 1]->SetPosition(pos);
-	depthSketches[depthSketches.size() - 1]->SetRotation(rot);
-
-	entities.push_back(depthSketches[depthSketches.size() - 1]);
-}
-
-std::vector<GameEntity*> GameManager::GetDepthSketches()
-{
-	return depthSketches;
 }

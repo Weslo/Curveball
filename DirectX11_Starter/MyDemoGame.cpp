@@ -84,11 +84,13 @@ bool MyDemoGame::Init()
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
 
+	manager->CreatePixelShader();
+	manager->CreateVertexShader();
+
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
 	manager->CreateResourceView(L"../Assets/ballTex.png");
 	manager->CreateResourceView(L"../Assets/paddle.png");
-	manager->CreateResourceView(L"../Assets/blueasfuck.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
@@ -98,18 +100,15 @@ bool MyDemoGame::Init()
 	//Create materials and meshes that will be used based on previous creation of stuff
 
 	//walls
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
-	//ball
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
+	//ball																																					 
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
 	//paddle
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
-	//TEMPORARY
-	manager->CreateMaterial(manager->GetPixelShaders()[0], manager->GetVertexShaders()[0], manager->GetResourceViews()[3], manager->GetSamplerStates()[0], L"pixelShader.cso", L"vertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"WallPixelShader.cso", L"WallVertexShader.cso");
 
 	manager->CreateMesh("../Assets/sphere.obj");
 	manager->CreateMesh("../Assets/boundary2.obj");
 	manager->CreateMesh("../Assets/paddle.obj");
-	manager->CreateMesh("../Assets/depthSketch.obj");
 
 	//Create ball and walls
 	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[1]);
@@ -127,12 +126,6 @@ bool MyDemoGame::Init()
 
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
-
-	//TEMPORARY
-	manager->CreateDepthSketch(XMFLOAT3(0, -2.499f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, 0), manager->GetMeshes()[3], manager->GetMaterials()[3]);//bottom
-	manager->CreateDepthSketch(XMFLOAT3(-2.499f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, -XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
-	manager->CreateDepthSketch(XMFLOAT3(0, 2.499f, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(0, XM_PI/2, XM_PI), manager->GetMeshes()[3], manager->GetMaterials()[3]);
-	manager->CreateDepthSketch(XMFLOAT3(2.499f, 0, manager->GetBalls()[0]->GetPosition().z), XMFLOAT3(XM_PI/2, 0, XM_PI/2), manager->GetMeshes()[3], manager->GetMaterials()[3]);
 
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
 
@@ -225,12 +218,6 @@ void MyDemoGame::UpdateScene(float dt)
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 
 	manager->GetGameController()->CheckBounds();
-
-	//TEMPORARY
-	for (int i = 0; i < manager->GetDepthSketches().size(); i++)
-	{
-		manager->GetDepthSketches()[i]->SetPosition(manager->GetDepthSketches()[i]->GetPosition().x, manager->GetDepthSketches()[i]->GetPosition().y, manager->GetBalls()[0]->GetPosition().z);
-	}
 }
 
 // Clear the screen, redraw everything, present
@@ -266,6 +253,12 @@ void MyDemoGame::DrawScene()
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetGameEntities()[i]->GetWorldMatrix());
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+
+		if (manager->GetGameEntities()[i] = dynamic_cast<Boundary*>(manager->GetGameEntities()[i]))
+		{
+			manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
+		}
+		
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
@@ -318,3 +311,13 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 	prevMousePos.y = y;
 }
 #pragma endregion
+
+
+XMFLOAT2 MyDemoGame::CalcDepthLines()
+{
+	std::vector<XMFLOAT2> toReturn;
+	float pos = manager->GetBalls()[0]->GetPosition().z - manager->GetBalls()[0]->GetRadius() / 2;
+	float pos2 = manager->GetBalls()[0]->GetPosition().z + manager->GetBalls()[0]->GetRadius() / 2;
+
+	return XMFLOAT2(pos, pos2);
+}

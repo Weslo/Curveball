@@ -5,7 +5,7 @@
 class Material
 {
 public:
-	Material(SimplePixelShader* ps, SimpleVertexShader* vs, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	Material(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	~Material();
 
 	SimplePixelShader* GetPixelShader();

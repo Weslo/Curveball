@@ -56,6 +56,8 @@ private:
 	void LoadShadersAndInputLayout();
 	void InitializeCameraMatrices();
 
+	XMFLOAT2 CalcDepthLines();
+
 private:
 
 	GameManager* manager;
