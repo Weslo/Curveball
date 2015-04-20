@@ -58,10 +58,11 @@ void Ball::Update(float dt)
 	position.y += velocity.y * dt;
 	position.z += velocity.z * dt;
 
-	rotation.x += angularVelocity.x * dt;
-	rotation.y += angularVelocity.y * dt;
-	rotation.z += angularVelocity.z * dt;
+	rotation.x += angularVelocity.y * (dt * 4);
+	rotation.y += angularVelocity.x * (dt * 4);
+	rotation.z += angularVelocity.z * (dt * 4);
 
-	velocity.x += angularVelocity.x / 50;
-	velocity.y += angularVelocity.y / 50;
+	velocity.x += angularVelocity.x / 150;
+	velocity.y += angularVelocity.y / 150;
+
 }

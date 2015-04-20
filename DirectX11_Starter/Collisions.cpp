@@ -79,6 +79,9 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		//Collision was found, respond by moving the ball to the closest point inside the plane and reflecting it
 		XMVECTOR nearestPt = NearestPointOnPlayer(b, p, bPos);
 
+		//Difference between the center and th point of contact, determines extra spin applied to the bal to speed up the game
+		XMVECTOR contactPt = bPos - XMLoadFloat3(&p->GetPosition());
+
 		XMVECTOR prevP = XMLoadFloat3(&b->GetPrevPos());
 
 		//Store radius as an XMVector to multiply by
@@ -92,7 +95,7 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		prevP = nearestPt + r;
 
 		//Reflect the ball
-		ReflectBallPlayer(b, p);
+		ReflectBallPlayer(b, p, contactPt);
 	}
 }
 
@@ -171,7 +174,7 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w)
 	v = bVel + J;
 
 	//The new angular velocity based on impulse and moment of inertia
-	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I;
+	XMVECTOR aW = bAVel * .9f;
 
 	//Set the new velocities
 	XMFLOAT3 newVel = XMFLOAT3(0, 0, 0);
@@ -185,7 +188,7 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w)
 }
 
 //Reflect the ball when a collision is found
-void Collisions::ReflectBallPlayer(Ball* b, Player* p)
+void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact)
 {
 	//Store XMVector references to necessary values
 	XMVECTOR bVel = XMLoadFloat3(&b->GetVelocity());
@@ -214,7 +217,7 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p)
 
 	//The new angular velocity based on impulse and moment of inertia
 	XMVECTOR playerVelocity = XMLoadFloat3(&p->GetVelocity());
-	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I - playerVelocity/10;
+	XMVECTOR aW = bAVel + playerVelocity * .8f;
 
 	//Set the new velocities
 	XMFLOAT3 newVel = XMFLOAT3(0, 0, 0);

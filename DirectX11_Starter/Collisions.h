@@ -23,6 +23,6 @@ private:
 	XMVECTOR NearestPointOnPlayer(Ball* b, Player* p, XMVECTOR bPos);
 	void AdvanceFrame();
 	void ReflectBallWall(Ball* b, Boundary* w);
-	void ReflectBallPlayer(Ball* b, Player* p);
+	void ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact);
 };
 
