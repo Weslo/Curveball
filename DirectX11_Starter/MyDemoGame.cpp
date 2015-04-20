@@ -100,29 +100,29 @@ bool MyDemoGame::Init()
 	//Create materials and meshes that will be used based on previous creation of stuff
 
 	//walls
-	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"WallPixelShader.cso", L"WallVertexShader.cso");
 	//ball																																					 
 	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
 	//paddle
-	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"WallPixelShader.cso", L"WallVertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
 
+	manager->CreateMesh("../Assets/wall.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
-	manager->CreateMesh("../Assets/boundary2.obj");
 	manager->CreateMesh("../Assets/paddle.obj");
-
-	//Create ball and walls
-	manager->CreateBall(.25f, manager->GetMeshes()[0], manager->GetMaterials()[1]);
-	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(0, 0, -1.2f));
-	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
-	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
 
 	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
 
-	manager->CreateWall(20, 5, XMFLOAT3(0, -2.5f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Bottom wall
-	manager->CreateWall(20, 5, XMFLOAT3(-2.5f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Left Wall
-	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Top wall
-	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Right wall
-	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[1], manager->GetMaterials()[0]); //Temp back wall
+	manager->CreateWall(20, 5, XMFLOAT3(0, -2.5f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Bottom wall
+	manager->CreateWall(20, 5, XMFLOAT3(-2.5f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Left Wall
+	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Top wall
+	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Right wall
+	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Temp back wall
+
+	//Create ball and walls
+	manager->CreateBall(.25f, manager->GetMeshes()[1], manager->GetMaterials()[1]);
+	manager->GetBalls()[0]->SetVelocity(XMFLOAT3(0, 0, -1.2f));
+	manager->GetBalls()[0]->SetAngularVelocity(XMFLOAT3(.3f, .3f, .3f));
+	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
 
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
@@ -165,6 +165,17 @@ bool MyDemoGame::Init()
 		"secondDirectionalLight",
 		&secondLight,
 		sizeof(DirectionalLight));
+
+	manager->GetPixelShaders()[1]->SetData(
+		"directionalLight",
+		&directionalLight,
+		sizeof(DirectionalLight));
+
+	manager->GetPixelShaders()[1]->SetData(
+		"secondDirectionalLight",
+		&secondLight,
+		sizeof(DirectionalLight));
+
 
 	// Successfully initialized
 	return true;
