@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEntity.h"
+#include "Camera.h"
 class Player :
 	public GameEntity
 {
@@ -11,7 +12,7 @@ public:
 	XMFLOAT3 GetUp();
 	float GetWidth();
 	float GetHeight();
-	void Update(XMFLOAT3 mPos, float w, XMFLOAT2 window, float dt);
+	void Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera, float dt);
 
 private:
 	XMFLOAT3 velocity;
@@ -21,6 +22,6 @@ private:
 	float height;
 	float width;
 
-	void calcVelocity();
+	XMFLOAT3 projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera* camera);
 };
 

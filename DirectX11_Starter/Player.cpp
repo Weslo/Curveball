@@ -1,6 +1,5 @@
 #include "Player.h"
 
-
 Player::Player(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma) : GameEntity(m, ma)
 {
 	position = pos;
@@ -36,27 +35,23 @@ float Player::GetHeight()
 	return height;
 }
 
-void Player::Update(XMFLOAT3 mPos, float w,  XMFLOAT2 window, float dt)
-{	
-	//w is thw width of the wall
-	//We know the size of the tunnel holding the paddle at all times
-	//Only need to account so the ends don't go outside.
-	//Map between the walls while accounting for paddle size
+void Player::Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera, float dt)
+{
 
-	//Bounds to follow based on the wall and the fact that our game is centered around 0,0
-	float lBound = -w / 2 + width / 2;
-	float rBound = w / 2 - width / 2;
-	float uBound = -w / 2 + height / 2;
-	float dBound = w / 2 - height / 2;
-
-	float percent = (mPos.x / window.x) * (rBound - lBound) - rBound;
-
-	position.x = percent;
-
-	percent = (mPos.y / window.y) * (dBound - uBound) - dBound;
-
-	position.y = -percent;
+	XMFLOAT3 worldMousePos = projectMouseToWorld(mPos, window, camera);
+	position.x = worldMousePos.x;
+	position.y = worldMousePos.y;
 
 	velocity = XMFLOAT3((position.x - previousPos.x) / dt, (position.y - previousPos.y) / dt, (position.z - previousPos.z) / dt);
 	previousPos = position;
+}
+
+XMFLOAT3 Player::projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera* camera)
+{
+	XMVECTOR cubeCoord = XMVectorSet((mousePos.x / window.x * 2) - 1, -((mousePos.y / window.y * 2) - 1), 10, 0);
+	XMMATRIX cameraInverse = XMLoadFloat4x4(&(camera->GetInverseMatrix()));
+	XMVECTOR worldPos = XMVector3Transform(cubeCoord, cameraInverse);
+	XMFLOAT3 _worldPos;
+	XMStoreFloat3(&_worldPos, worldPos);
+	return _worldPos;
 }

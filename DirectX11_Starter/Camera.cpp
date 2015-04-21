@@ -35,6 +35,14 @@ XMFLOAT4X4 Camera::GetProjectionMatrix()
 	return projectionMatrix;
 }
 
+XMFLOAT4X4 Camera::GetInverseMatrix()
+{
+	XMMATRIX _inverse = XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&projectionMatrix), XMLoadFloat4x4(&viewMatrix)), XMMatrixIdentity());
+	XMFLOAT4X4 inverse;
+	XMStoreFloat4x4(&inverse, _inverse);
+	return inverse;
+}
+
 void Camera::RecalculateProjectionMatrix(float aspectRatio)
 {
 	XMMATRIX P = XMMatrixPerspectiveFovLH(

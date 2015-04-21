@@ -16,6 +16,8 @@ public:
 	XMFLOAT4X4 GetProjectionMatrix();
 	void RecalculateProjectionMatrix(float aspectRatio);
 
+	XMFLOAT4X4 GetInverseMatrix();
+
 	XMVECTOR GetPosition();
 	void TranslateLocalAxis(XMVECTOR localDirection, float distance);
 	void TranslateWorldAxis(XMVECTOR worldDirection, float distance);

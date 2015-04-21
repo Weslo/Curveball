@@ -221,7 +221,7 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetBalls()[0]->SetPrevPos(manager->GetBalls()[0]->GetPosition());
 	manager->GetBalls()[0]->Update(dt);
 
-	manager->GetPlayer()->Update(mousePos, (float)manager->GetWalls()[0]->GetWidth(), XMFLOAT2((float)windowWidth, (float)windowHeight), dt);
+	manager->GetPlayer()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, dt);
 
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 
