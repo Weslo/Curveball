@@ -40,9 +40,9 @@ public:
 	void UpdatParticles(float dt);
 	void KillParticles();
 
-	bool UpdateBuffers(ID3D11DeviceContext deviceContext);
+	bool UpdateBuffers(ID3D11DeviceContext* deviceContext);
 
-	void RenderBuffers(ID3D11DeviceContext deviceContext);
+	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
 private:
 
