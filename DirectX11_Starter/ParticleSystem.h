@@ -30,14 +30,24 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 
+	bool Initialize(ID3D11Device* device, Material* _material);
+	void Shutdown();
+	bool Update(ID3D11DeviceContext* deviceContext, float dt);
+	void Draw(ID3D11DeviceContext* deviceContext);
+
+	Material* GetMaterial();
+	int GetIndexCount();
+
+private:
+
 	bool InitializeParticleSystem();
-	void ShutDownParticleSystem();
+	void ShutdownParticleSystem();
 
 	bool InitializeBuffers(ID3D11Device* device);
-	void ShutDownBuffers();
+	void ShutdownBuffers();
 
 	void EmitParticles(float dt);
-	void UpdatParticles(float dt);
+	void UpdateParticles(float dt);
 	void KillParticles();
 
 	bool UpdateBuffers(ID3D11DeviceContext* deviceContext);
