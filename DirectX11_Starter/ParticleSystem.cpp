@@ -368,15 +368,116 @@ void ParticleSystem::KillParticles()
 	// Kill particles that have moved past the height of -3.0f.
 	for (i = 0; i < maxParticles; i++)
 	{
-		
+		if ((particles[i].active == true) && (particles[i].y < -3.0f))
+		{
+			particles[i].active = false;
+			currentParticleCount--;
+
+			// Shift all the live particles in the array.
+			for (j = i; j < maxParticles - 1; j++)
+			{
+				particles[j].x = particles[j + 1].x;
+				particles[j].y = particles[j + 1].y;
+				particles[j].z = particles[j + 1].z;
+				particles[j].r = particles[j + 1].r;
+				particles[j].g = particles[j + 1].g;
+				particles[j].b = particles[j + 1].b;
+				particles[j].velocity = particles[j + 1].velocity;
+				particles[j].active = particles[j + 1].active;
+			}
+		}
 	}
 }
 
+// Updates the dynamic vertex buffer each frame.
 bool ParticleSystem::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 {
-	return false;
+	int index, i;
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	VertexType* verticesPtr;
+
+	// Initialize vertex array to zero.
+	memset(vertices, 0, sizeof(VertexType)* vertexCount);
+
+	// Build the vertex array from the particle list.
+	index = 0;
+
+	for (i = 0; i < currentParticleCount; i++)
+	{
+		// Bottom left.
+		vertices[index].position = XMFLOAT3(particles[i].x - particleSize, particles[i].y - particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(0, 1);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+
+		// Top Left.
+		vertices[index].position = XMFLOAT3(particles[i].x - particleSize, particles[i].y + particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(0, 0);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+
+		// Bottom Right.
+		vertices[index].position = XMFLOAT3(particles[i].x + particleSize, particles[i].y - particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(1, 1);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+		
+		// Bottom Right.
+		vertices[index].position = XMFLOAT3(particles[i].x + particleSize, particles[i].y - particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(1, 1);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+
+		// Top Left.
+		vertices[index].position = XMFLOAT3(particles[i].x - particleSize, particles[i].y + particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(0, 0);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+
+		// Top Right.
+		vertices[index].position = XMFLOAT3(particles[i].x + particleSize, particles[i].y + particleSize, particles[i].z);
+		vertices[index].texture = XMFLOAT2(1, 0);
+		vertices[index].color = XMFLOAT4(particles[i].r, particles[i].g, particles[i].b, 1);
+		index++;
+	}
+
+	// Lock the vertex buffer.
+	result = deviceContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the vertex buffer.
+	verticesPtr = (VertexType*)mappedResource.pData;
+
+	// Copy the data into the vertex buffer.
+	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType)* vertexCount));
+
+	// Unlock the vertex buffer.
+	deviceContext->Unmap(vertexBuffer, 0);
+
+	// Successful buffer update!
+	return true;
 }
 
+// Draws the particle buffers.
 void ParticleSystem::RenderBuffers(ID3D11DeviceContext* deviceContext)
 {
+	unsigned int stride;
+	unsigned int offset;
+
+	// Set stride and offset.
+	stride = sizeof(VertexType);
+	offset = 0;
+
+	// Set the vertex data into the input assembler so shaders can render it.
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+
+	// Set the index data into the input assembler so shaders can render it.
+	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set the type of primitive that should be rendered.
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
