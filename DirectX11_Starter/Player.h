@@ -12,11 +12,15 @@ public:
 	XMFLOAT3 GetUp();
 	float GetWidth();
 	float GetHeight();
-	void Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera, float dt);
+	std::vector<XMFLOAT3> GetPreviousPosition();
+	void Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera);
+	void AddPrevPos(XMFLOAT3);
+	void ResetPrevPos();
+	void CalcVelocity(float dt);
 
 private:
 	XMFLOAT3 velocity;
-	XMFLOAT3 previousPos;
+	std::vector<XMFLOAT3> prevPosition;
 	XMFLOAT3 up;
 	float zPos;
 	float height;
@@ -24,4 +28,3 @@ private:
 
 	XMFLOAT3 projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera* camera);
 };
-

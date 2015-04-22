@@ -17,7 +17,7 @@ float Ball::GetRadius()
 	return radius;
 }
 
-XMFLOAT3 Ball::GetPrevPos()
+std::vector<XMFLOAT3> Ball::GetPrevPos()
 {
 	return prevPosition;
 }
@@ -47,9 +47,14 @@ XMFLOAT3 Ball::GetAngularVelocity()
 	return angularVelocity;
 }
 
-void Ball::SetPrevPos(XMFLOAT3 p)
+void Ball::AddPrevPos(XMFLOAT3 p)
 {
-	prevPosition = p;
+	prevPosition.push_back(p);
+}
+
+void Ball::ResetPrevPos()
+{
+	prevPosition.clear();
 }
 
 void Ball::Update(float dt)
@@ -58,11 +63,9 @@ void Ball::Update(float dt)
 	position.y += velocity.y * dt;
 	position.z += velocity.z * dt;
 
-	rotation.x += angularVelocity.y * (dt * 4);
-	rotation.y += angularVelocity.x * (dt * 4);
-	rotation.z += angularVelocity.z * (dt * 4);
+	rotation.x += angularVelocity.y * dt;
+	rotation.y += angularVelocity.x * dt;
 
 	velocity.x += angularVelocity.x / 150;
 	velocity.y += angularVelocity.y / 150;
-
 }

@@ -84,8 +84,14 @@ bool MyDemoGame::Init()
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
 
+	manager->GetPixelShaders()[0]->LoadShaderFile(L"WallPixelShader.cso");
+	manager->GetVertexShaders()[0]->LoadShaderFile(L"WallVertexShader.cso");
+
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
+
+	manager->GetPixelShaders()[1]->LoadShaderFile(L"PixelShader.cso");
+	manager->GetVertexShaders()[1]->LoadShaderFile(L"VertexShader.cso");
 
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
@@ -100,11 +106,11 @@ bool MyDemoGame::Init()
 	//Create materials and meshes that will be used based on previous creation of stuff
 
 	//walls
-	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0], L"WallPixelShader.cso", L"WallVertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
 	//ball																																					 
-	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[1], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
 	//paddle
-	manager->CreateMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[2], manager->GetSamplerStates()[0], L"PixelShader.cso", L"VertexShader.cso");
+	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/wall.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
@@ -124,7 +130,7 @@ bool MyDemoGame::Init()
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
 
-	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
+	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer(), 3, 3, 1);
 
 	//Now that we have walls, create the collision manager
 	collisionManager = Collisions(manager->GetWalls());
@@ -215,15 +221,9 @@ void MyDemoGame::OnResize()
 // Update your game state
 void MyDemoGame::UpdateScene(float dt)
 {
-	camera->Update(dt);
+	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, dt);
 
-	//Set ball prev position before updating, used for collision detection
-	manager->GetBalls()[0]->SetPrevPos(manager->GetBalls()[0]->GetPosition());
-	manager->GetBalls()[0]->Update(dt);
-
-	manager->GetPlayer()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, dt);
-
-	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
+	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
 
 	manager->GetGameController()->CheckBounds();
 }

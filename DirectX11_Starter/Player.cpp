@@ -25,6 +25,11 @@ XMFLOAT3 Player::GetUp()
 	return up;
 }
 
+std::vector<XMFLOAT3> Player::GetPreviousPosition()
+{
+	return prevPosition;
+}
+
 float Player::GetWidth()
 {
 	return width;
@@ -35,17 +40,6 @@ float Player::GetHeight()
 	return height;
 }
 
-void Player::Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera, float dt)
-{
-
-	XMFLOAT3 worldMousePos = projectMouseToWorld(mPos, window, camera);
-	position.x = worldMousePos.x;
-	position.y = worldMousePos.y;
-
-	velocity = XMFLOAT3((position.x - previousPos.x) / dt, (position.y - previousPos.y) / dt, (position.z - previousPos.z) / dt);
-	previousPos = position;
-}
-
 XMFLOAT3 Player::projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera* camera)
 {
 	XMVECTOR cubeCoord = XMVectorSet((mousePos.x / window.x * 2) - 1, -((mousePos.y / window.y * 2) - 1), 10, 0);
@@ -54,4 +48,26 @@ XMFLOAT3 Player::projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera*
 	XMFLOAT3 _worldPos;
 	XMStoreFloat3(&_worldPos, worldPos);
 	return _worldPos;
+}
+
+void Player::AddPrevPos(XMFLOAT3 p)
+{
+	prevPosition.push_back(p);
+}
+
+void Player::CalcVelocity(float dt)
+{
+	velocity = XMFLOAT3((position.x - prevPosition[0].x) / .1, (position.y - prevPosition[0].y) / .1, 0);
+}
+
+void Player::ResetPrevPos()
+{
+	prevPosition.clear();
+}
+
+void Player::Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* camera)
+{
+	XMFLOAT3 worldMousePos = projectMouseToWorld(mPos, window, camera);
+	position.x = worldMousePos.x;
+	position.y = worldMousePos.y;
 }
