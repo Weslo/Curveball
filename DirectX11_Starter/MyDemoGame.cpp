@@ -123,6 +123,8 @@ bool MyDemoGame::Init()
 
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
+	
+	manager->CreateParticleSystem(manager->GetMaterials()[0]);
 
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer());
 
@@ -226,6 +228,8 @@ void MyDemoGame::UpdateScene(float dt)
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), dt);
 
 	manager->GetGameController()->CheckBounds();
+
+	manager->GetParticleSystem()->Update(deviceContext, dt);
 }
 
 // Clear the screen, redraw everything, present
@@ -277,6 +281,9 @@ void MyDemoGame::DrawScene()
 
 		// Draw the mesh
 		manager->GetGameEntities()[i]->Draw(deviceContext);
+
+		// Draw the particle system.
+		manager->GetParticleSystem()->Draw(deviceContext);
 	}
 
 	// Present the buffer

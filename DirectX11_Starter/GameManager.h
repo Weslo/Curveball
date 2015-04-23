@@ -11,6 +11,7 @@
 #include <vector>
 #include "Player.h"
 #include "GameController.h"
+#include "ParticleSystem.h"
 
 class GameManager
 {
@@ -26,6 +27,7 @@ public:
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn);
+	void CreateParticleSystem(Material* material);
 	void CreatePixelShader();
 	void CreateVertexShader();
 	void CreateResourceView(const wchar_t*);
@@ -39,6 +41,7 @@ public:
 	std::vector<Boundary*> GetWalls();
 	std::vector<Mesh*> GetMeshes();
 	std::vector<Material*> GetMaterials();
+	ParticleSystem* GetParticleSystem();
 	std::vector<SimplePixelShader*> GetPixelShaders();
 	std::vector<SimpleVertexShader*> GetVertexShaders();
 	std::vector<ID3D11ShaderResourceView*> GetResourceViews();
@@ -61,6 +64,8 @@ private:
 	std::vector<Boundary*> walls;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
+
+	ParticleSystem* particleSystem;
 
 	std::vector<SimplePixelShader*> pixelShaders;
 	std::vector<SimpleVertexShader*> vertexShaders;

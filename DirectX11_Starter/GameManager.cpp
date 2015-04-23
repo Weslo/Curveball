@@ -14,6 +14,10 @@ GameManager::~GameManager()
 	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
 	entities.clear();
 
+	// Release the particle system.
+	particleSystem->Shutdown();
+	delete particleSystem;
+
 	for (std::vector< Mesh* >::iterator it = meshes.begin(); it != meshes.end(); ++it) { delete (*it); }
 	meshes.clear();
 
@@ -61,6 +65,11 @@ std::vector<Mesh*> GameManager::GetMeshes()
 std::vector<Material*> GameManager::GetMaterials()
 {
 	return materials;
+}
+
+ParticleSystem* GameManager::GetParticleSystem()
+{
+	return particleSystem;
 }
 
 std::vector<SimplePixelShader*> GameManager::GetPixelShaders()
@@ -187,6 +196,12 @@ void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material
 {
 	player = new Player(pos, w, h, m, ma);
 	entities.push_back(player);
+}
+
+void GameManager::CreateParticleSystem(Material* material)
+{
+	particleSystem = new ParticleSystem();
+	particleSystem->Initialize(device, material);
 }
 
 void GameManager::CreateGameController(Ball* ball, Player* player)
