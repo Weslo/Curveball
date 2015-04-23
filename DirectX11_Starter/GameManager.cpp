@@ -157,6 +157,12 @@ void GameManager::CreateSamplerState()
 }
 
 //Create material given shaders to use and texture/sampler
+void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new Material(vs, ps, rv, ss));
+}
+
+//Create material given shaders to use and texture/sampler
 void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
 {
 	materials.push_back(new Material(vs, ps, rv, ss));
@@ -207,4 +213,9 @@ void GameManager::CreateParticleSystem(Material* material)
 void GameManager::CreateGameController(Ball* ball, Player* player)
 {
 	gameController = new GameController(ball, player);
+}
+
+void GameManager::CreateGameController(Ball* ball, Player* player, int cL, int pL, int l)
+{
+	gameController = new GameController(ball, player, cL, pL, l);
 }

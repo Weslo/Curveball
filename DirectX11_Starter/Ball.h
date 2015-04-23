@@ -8,8 +8,9 @@ public:
 	Ball(float r, Mesh* m, Material* ma);
 	~Ball();
 	float GetRadius();
-	XMFLOAT3 GetPrevPos();
-	void SetPrevPos(XMFLOAT3 p);
+	std::vector<XMFLOAT3> GetPrevPos();
+	void AddPrevPos(XMFLOAT3 p);
+	void ResetPrevPos();
 	void SetVelocity(XMFLOAT3 v);
 	void ApplyVelocity(XMFLOAT3 v);
 	XMFLOAT3 GetVelocity();
@@ -23,6 +24,6 @@ private:
 	float mass;
 	XMFLOAT3 velocity;
 	XMFLOAT3 angularVelocity;
-	XMFLOAT3 prevPosition;
+	std::vector<XMFLOAT3> prevPosition;
 };
 

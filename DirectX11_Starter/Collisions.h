@@ -11,7 +11,7 @@ public:
 	Collisions();
 	Collisions(std::vector<Boundary*> w);
 	~Collisions();
-	void DetectCollisions(Ball* b, Player* p, float dt);
+	void DetectCollisions(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed, float dt);
 
 private:
 
@@ -22,7 +22,7 @@ private:
 	XMVECTOR NearestPointOnPlane(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos);
 	XMVECTOR NearestPointOnPlayer(Ball* b, Player* p, XMVECTOR bPos);
 	void AdvanceFrame();
-	void ReflectBallWall(Ball* b, Boundary* w);
-	void ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact);
+	void ReflectBallWall(Ball* b, Boundary* w, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed);
+	void ReflectBallPlayer(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed);
 };
 

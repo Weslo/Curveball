@@ -26,6 +26,7 @@ public:
 	void CreateBall(float r, Mesh*, Material*);
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
+	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn);
 	void CreateParticleSystem(Material* material);
 	void CreatePixelShader();
@@ -34,6 +35,7 @@ public:
 	void CreateSamplerState();
 	void CreateCamera(int w, int h);
 	void CreateGameController(Ball* ball, Player* player);
+	void CreateGameController(Ball* ball, Player* player, int cL, int pL, int l);
 
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();

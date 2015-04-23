@@ -19,7 +19,7 @@ inline float squared(float v) { return v * v; }
 
 //Detect collisions between object.
 //Needs to track player and enemy in the future
-void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
+void Collisions::DetectCollisions(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed, float dt)
 {
 	//Store a reference to the balls position
 	XMVECTOR bPos = XMLoadFloat3(&b->GetPosition());
@@ -42,9 +42,6 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		{
 			XMVECTOR nearestPt = NearestPointOnPlane(b, walls[i], bPos, wPos);
 
-			//Collision was found, respond by moving the ball to the closest point inside the plane and reflecting it
-			XMVECTOR prevP = XMLoadFloat3(&b->GetPrevPos());
-
 			//Store radius as an XMVector to multiply by
 			XMFLOAT3 radius = XMFLOAT3(b->GetRadius(), b->GetRadius(), b->GetRadius());
 			XMVECTOR r = XMLoadFloat3(&radius);
@@ -53,10 +50,12 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 			r = XMVectorMultiply(r, XMLoadFloat3(&walls[i]->GetUp()));
 
 			//Add the radius to the nearest point to scale the ball in the correct direction
-			prevP = nearestPt + r;
+			XMVECTOR newPos = nearestPt + r;
+
+			XMStoreFloat3(&b->GetPosition(), newPos);
 
 			//Reflect the ball
-			ReflectBallWall(b, walls[i]);
+			ReflectBallWall(b, walls[i], maxSpeed, maxAngularSpeed);
 		}
 	}
 
@@ -82,8 +81,6 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		//Difference between the center and th point of contact, determines extra spin applied to the bal to speed up the game
 		XMVECTOR contactPt = bPos - XMLoadFloat3(&p->GetPosition());
 
-		XMVECTOR prevP = XMLoadFloat3(&b->GetPrevPos());
-
 		//Store radius as an XMVector to multiply by
 		XMFLOAT3 radius = XMFLOAT3(b->GetRadius(), b->GetRadius(), b->GetRadius());
 		XMVECTOR r = XMLoadFloat3(&radius);
@@ -92,10 +89,13 @@ void Collisions::DetectCollisions(Ball* b, Player* p, float dt)
 		r = XMVectorMultiply(r, XMLoadFloat3(&p->GetUp()));
 
 		//Add the radius to the nearest point to scale the ball in the correct direction
-		prevP = nearestPt + r;
+		XMVECTOR newPos = nearestPt + r;
+
+		XMStoreFloat3(&b->GetPosition(), newPos);
 
 		//Reflect the ball
-		ReflectBallPlayer(b, p, contactPt);
+		p->CalcVelocity(dt);
+		ReflectBallPlayer(b, p, maxSpeed, maxAngularSpeed);
 	}
 }
 
@@ -147,7 +147,7 @@ XMVECTOR Collisions::NearestPointOnPlayer(Ball* b, Player* p, XMVECTOR bPos)
 }
 
 //Reflect the ball when a collision is found
-void Collisions::ReflectBallWall(Ball* b, Boundary* w)
+void Collisions::ReflectBallWall(Ball* b, Boundary* w, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed)
 {
 	//Store XMVector references to necessary values
 	XMVECTOR bVel = XMLoadFloat3(&b->GetVelocity());
@@ -174,21 +174,51 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w)
 	v = bVel + J;
 
 	//The new angular velocity based on impulse and moment of inertia
-	XMVECTOR aW = bAVel * .9f;
+	XMVECTOR aW = bAVel - XMVector3Cross(J, R) / I;
 
 	//Set the new velocities
 	XMFLOAT3 newVel = XMFLOAT3(0, 0, 0);
 	XMStoreFloat3(&newVel, v);
-	b->SetVelocity(newVel);
+
+	//Cap the velocity
+	if (newVel.x > maxSpeed.x) { newVel.x = maxSpeed.x; }
+	else if (newVel.x < -maxSpeed.x) { newVel.x = -maxSpeed.x; }
+
+	if (newVel.y > maxSpeed.y) { newVel.y = maxSpeed.y; }
+	else if (newVel.y < -maxSpeed.y) { newVel.y = -maxSpeed.y; }
+
+	if (newVel.z > maxSpeed.z) { newVel.z = maxSpeed.z; }
+	else if (newVel.z < -maxSpeed.z) { newVel.z = -maxSpeed.z; }
 
 	XMFLOAT3 newAVel = XMFLOAT3(0, 0, 0);
 	XMStoreFloat3(&newAVel, aW);
+
+	//Cap the angular velocity
+	if (newAVel.x > maxAngularSpeed.x) { newAVel.x = maxAngularSpeed.x; }
+	else if (newAVel.x < -maxAngularSpeed.x) { newAVel.x = -maxAngularSpeed.x; }
+
+	if (newAVel.y > maxAngularSpeed.y) { newAVel.y = maxAngularSpeed.y; }
+	else if (newAVel.y < -maxAngularSpeed.y) { newAVel.y = -maxAngularSpeed.y; }
+
+	//Dampen the velocities based on the wall hit
+	if (w->GetUp().x != 0)
+	{
+		newAVel.x *= .5f;
+		newVel.x *= .8f;
+	}
+	else if (w->GetUp().y != 0)
+	{
+		newAVel.y *= .5f;
+		newVel.y *= .8f;
+	}	
+
 	//Don't set z or it will just bounce around the middle
-	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, b->GetAngularVelocity().z));
+	b->SetVelocity(newVel);
+	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
 }
 
 //Reflect the ball when a collision is found
-void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact)
+void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT3 maxAngularSpeed)
 {
 	//Store XMVector references to necessary values
 	XMVECTOR bVel = XMLoadFloat3(&b->GetVelocity());
@@ -207,7 +237,7 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact)
 	XMVECTOR v = bVel + XMVector3Cross(R, bAVel);
 
 	//Normally gets divided by a value, but since we have a perfect sphere it breaks the equation. Don't need it for now (may need later)
-	float numerator = -(1.0f + 1.0f) * XMVectorGetX(XMVector3Dot(v, pUp));
+	float numerator = -(1.3f + 1.0f) * XMVectorGetX(XMVector3Dot(v, pUp));
 
 	//Impulse to apply to the ball
 	XMVECTOR J = pUp * numerator;
@@ -224,8 +254,30 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMVECTOR contact)
 	XMStoreFloat3(&newVel, v);
 	b->SetVelocity(newVel);
 
+	//Cap the velocity
+	if (newVel.x > maxSpeed.x) { newVel.x = maxSpeed.x; }
+	else if (newVel.x < -maxSpeed.x) { newVel.x = -maxSpeed.x; }
+
+	if (newVel.y > maxSpeed.y) { newVel.y = maxSpeed.y; }
+	else if (newVel.y < -maxSpeed.y) { newVel.y = -maxSpeed.y; }
+
+	if (newVel.z > maxSpeed.z) { newVel.z = maxSpeed.z; }
+	else if (newVel.z < -maxSpeed.z) { newVel.z = -maxSpeed.z; }
+
+	b->SetVelocity(newVel);
+
 	XMFLOAT3 newAVel = XMFLOAT3(0, 0, 0);
 	XMStoreFloat3(&newAVel, aW);
+
+
+	//Cap the angular velocity
+	if (newAVel.x > maxAngularSpeed.x) { newAVel.x = maxAngularSpeed.x; }
+	else if (newAVel.x < -maxAngularSpeed.x) { newAVel.x = -maxAngularSpeed.x; }
+
+	if (newAVel.y > maxAngularSpeed.y) { newAVel.y = maxAngularSpeed.y; }
+	else if (newAVel.y < -maxAngularSpeed.y) { newAVel.y = -maxAngularSpeed.y; }
+
 	//Don't set z or it will just bounce around the middle
-	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, b->GetAngularVelocity().z));
+	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
+	p->ResetPrevPos();
 }
