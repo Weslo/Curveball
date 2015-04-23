@@ -51,8 +51,10 @@ void Collisions::DetectCollisions(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT
 
 			//Add the radius to the nearest point to scale the ball in the correct direction
 			XMVECTOR newPos = nearestPt + r;
+			XMFLOAT3 nP;
+			XMStoreFloat3(&nP, newPos);
 
-			XMStoreFloat3(&b->GetPosition(), newPos);
+			b->SetPosition(nP);
 
 			//Reflect the ball
 			ReflectBallWall(b, walls[i], maxSpeed, maxAngularSpeed);
@@ -91,7 +93,10 @@ void Collisions::DetectCollisions(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOAT
 		//Add the radius to the nearest point to scale the ball in the correct direction
 		XMVECTOR newPos = nearestPt + r;
 
-		XMStoreFloat3(&b->GetPosition(), newPos);
+		XMFLOAT3 nP;
+		XMStoreFloat3(&nP, newPos);
+
+		b->SetPosition(nP);
 
 		//Reflect the ball
 		p->CalcVelocity(dt);
@@ -123,14 +128,22 @@ XMVECTOR Collisions::NearestPointOnSphere(Ball* b, Boundary* w, XMVECTOR bPos, X
 //Return the closest 
 XMVECTOR Collisions::NearestPointOnPlane(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos)
 {
-	XMVECTOR axisBallPos = bPos * XMLoadFloat3(&w->GetUp());
-	XMVECTOR axisWallPos = wPos * XMLoadFloat3(&w->GetUp());
+	XMFLOAT3 bP;
 
-	axisBallPos = axisWallPos - axisBallPos;
+	if (w->GetUp().x != 0)
+	{
+		bP = XMFLOAT3(XMVectorGetX(wPos), b->GetPosition().y, b->GetPosition().z);
+	}
+	else if (w->GetUp().y != 0)
+	{
+		bP = XMFLOAT3(b->GetPosition().x, XMVectorGetY(wPos), b->GetPosition().z);
+	}
+	else if (w->GetUp().z != 0)
+	{
+		bP = XMFLOAT3(b->GetPosition().x, b->GetPosition().y, XMVectorGetZ(wPos));
+	}
 
-	bPos += axisBallPos;
-
-	return bPos;
+	return XMLoadFloat3(&bP);
 }
 
 //Return the closest 
