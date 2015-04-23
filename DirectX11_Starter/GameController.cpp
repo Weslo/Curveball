@@ -89,6 +89,7 @@ void GameController::Serve()
 	if (serving)
 	{
 		ball->ApplyVelocity(XMFLOAT3(0, 0, 8));
+		ball->SetAngularVelocity(XMFLOAT3(0, 4.0f, 0));
 		serving = false;
 	}
 }
