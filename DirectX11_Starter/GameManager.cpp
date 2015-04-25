@@ -98,6 +98,11 @@ Player* GameManager::GetPlayer()
 	return player;
 }
 
+Computer* GameManager::GetComputer()
+{
+	return computer;
+}
+
 GameController* GameManager::GetGameController()
 {
 	return gameController;
@@ -195,12 +200,18 @@ void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material
 	entities.push_back(player);
 }
 
+void GameManager::CreateComputer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma)
+{
+	computer = new Computer(pos, w, h, m, ma);
+	entities.push_back(computer);
+}
+
 void GameManager::CreateGameController(Ball* ball, Player* player)
 {
 	gameController = new GameController(ball, player);
 }
 
-void GameManager::CreateGameController(Ball* ball, Player* player, int cL, int pL, int l)
+void GameManager::CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l)
 {
-	gameController = new GameController(ball, player, cL, pL, l);
+	gameController = new GameController(ball, player, computer, cL, pL, l);
 }

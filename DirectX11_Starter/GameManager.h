@@ -22,6 +22,7 @@ public:
 	//Methods to create Mesh, Ball, Player, Material, Walls
 	//To create additional crap, add more methods here
 	void CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma);
+	void CreateComputer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma);
 	void CreateBall(float r, Mesh*, Material*);
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
@@ -33,10 +34,11 @@ public:
 	void CreateSamplerState();
 	void CreateCamera(int w, int h);
 	void CreateGameController(Ball* ball, Player* player);
-	void CreateGameController(Ball* ball, Player* player, int cL, int pL, int l);
+	void CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l);
 
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();
+	Computer* GetComputer();
 	std::vector<Ball*> GetBalls();
 	std::vector<Boundary*> GetWalls();
 	std::vector<Mesh*> GetMeshes();
@@ -59,6 +61,7 @@ private:
 	GameController* gameController;
 
 	Player* player;
+	Computer* computer;
 	std::vector<Ball*> balls;
 	std::vector<Boundary*> walls;
 	std::vector<Mesh*> meshes;
