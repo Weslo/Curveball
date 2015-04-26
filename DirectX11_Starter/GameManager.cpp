@@ -14,6 +14,9 @@ GameManager::~GameManager()
 	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
 	entities.clear();
 
+	for (std::vector< Light* >::iterator it = lights.begin(); it != lights.end(); ++it) { delete (*it); }
+	lights.clear();
+
 	for (std::vector< Mesh* >::iterator it = meshes.begin(); it != meshes.end(); ++it) { delete (*it); }
 	meshes.clear();
 
@@ -211,4 +214,24 @@ void GameManager::CreateGameController(Ball* ball, Player* player)
 void GameManager::CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l)
 {
 	gameController = new GameController(ball, player, computer, cL, pL, l);
+}
+
+void GameManager::CreateLight(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone)
+{
+	Light* l;
+
+	if (_lightType == 0)
+	{
+		l = new Light(_lightType, _ambient, _diffuse, _range);
+	}
+	else if (_lightType == 1)
+	{
+		l = new Light(_lightType, _ambient, _diffuse, _range, _pos, _att);
+	}
+	else
+	{
+		l = new Light(_lightType, _ambient, _diffuse, _range, _pos, _att, _dir, _cone);
+	}
+
+	lights.push_back(l);
 }

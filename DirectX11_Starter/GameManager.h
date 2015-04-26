@@ -11,6 +11,7 @@
 #include <vector>
 #include "Player.h"
 #include "GameController.h"
+#include "Light.h"
 
 class GameManager
 {
@@ -35,6 +36,7 @@ public:
 	void CreateCamera(int w, int h);
 	void CreateGameController(Ball* ball, Player* player);
 	void CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l);
+	void CreateLight(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone);
 
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();
@@ -66,6 +68,7 @@ private:
 	std::vector<Boundary*> walls;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
+	std::vector<Light*> lights;
 
 	std::vector<SimplePixelShader*> pixelShaders;
 	std::vector<SimpleVertexShader*> vertexShaders;
