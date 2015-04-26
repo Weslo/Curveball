@@ -93,6 +93,12 @@ bool MyDemoGame::Init()
 	manager->GetPixelShaders()[1]->LoadShaderFile(L"PixelShader.cso");
 	manager->GetVertexShaders()[1]->LoadShaderFile(L"VertexShader.cso");
 
+	// Create Particle shaders
+	manager->CreatePixelShader();
+	manager->CreateVertexShader();
+	manager->GetPixelShaders()[2]->LoadShaderFile(L"ParticlePixelShader.cso");
+	manager->GetVertexShaders()[2]->LoadShaderFile(L"ParticleVertexShader.cso");
+
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
 	manager->CreateResourceView(L"../Assets/ballTex.png");
@@ -111,6 +117,8 @@ bool MyDemoGame::Init()
 	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
 	//paddle
 	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
+	// particles
+	manager->CreateMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/wall.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
@@ -130,7 +138,7 @@ bool MyDemoGame::Init()
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
 	
-	manager->CreateParticleSystem(manager->GetMaterials()[0]);
+	manager->CreateParticleSystem(manager->GetMaterials()[3]);
 
 	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer(), 3, 3, 1);
 
