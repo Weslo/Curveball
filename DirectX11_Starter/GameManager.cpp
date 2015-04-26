@@ -172,6 +172,13 @@ void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, 
 	materials[materials.size() - 1]->GetVertexShader()->LoadShaderFile(vsn);
 }
 
+// Craete particle system.
+void GameManager::CreateParticleSystem(Material* material)
+{
+	particleSystem = new ParticleSystem();
+	particleSystem->Initialize(device, material);
+}
+
 //Create mesh from file
 void GameManager::CreateMesh(char* file)
 {
