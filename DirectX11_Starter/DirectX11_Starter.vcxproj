@@ -72,6 +72,7 @@
     <ClCompile Include="Boundary.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collisions.cpp" />
+    <ClCompile Include="Computer.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="Boundary.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collisions.h" />
+    <ClInclude Include="Computer.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameManager.h" />

@@ -40,9 +40,6 @@ GameManager::~GameManager()
 		ReleaseMacro(samplerStates[i]);
 	}
 
-	for (std::vector< SimpleVertexShader* >::iterator it = vertexShaders.begin(); it != vertexShaders.end(); ++it) { delete (*it); }
-	vertexShaders.clear();
-
 	delete gameController;
 }
 
@@ -105,6 +102,11 @@ std::vector<GameEntity*> GameManager::GetGameEntities()
 Player* GameManager::GetPlayer()
 {
 	return player;
+}
+
+Computer* GameManager::GetComputer()
+{
+	return computer;
 }
 
 GameController* GameManager::GetGameController()
@@ -204,10 +206,10 @@ void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material
 	entities.push_back(player);
 }
 
-void GameManager::CreateParticleSystem(Material* material)
+void GameManager::CreateComputer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma)
 {
-	particleSystem = new ParticleSystem();
-	particleSystem->Initialize(device, material);
+	computer = new Computer(pos, w, h, m, ma);
+	entities.push_back(computer);
 }
 
 void GameManager::CreateGameController(Ball* ball, Player* player)
@@ -215,7 +217,7 @@ void GameManager::CreateGameController(Ball* ball, Player* player)
 	gameController = new GameController(ball, player);
 }
 
-void GameManager::CreateGameController(Ball* ball, Player* player, int cL, int pL, int l)
+void GameManager::CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l)
 {
-	gameController = new GameController(ball, player, cL, pL, l);
+	gameController = new GameController(ball, player, computer, cL, pL, l);
 }

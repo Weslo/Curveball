@@ -130,8 +130,7 @@ bool MyDemoGame::Init()
 	manager->CreateWall(20, 5, XMFLOAT3(-2.5f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Left Wall
 	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Top wall
 	manager->CreateWall(20, 5, XMFLOAT3(2.5f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Right wall
-	manager->CreateWall(20, 5, XMFLOAT3(0, 2.5f, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0), wScale, XMFLOAT3(0, 0, -1.0f), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Temp back wall
-
+	
 	manager->CreateBall(.25f, manager->GetMeshes()[1], manager->GetMaterials()[1]);
 	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
 
@@ -140,7 +139,10 @@ bool MyDemoGame::Init()
 	
 	manager->CreateParticleSystem(manager->GetMaterials()[3]);
 
-	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer(), 3, 3, 1);
+	manager->CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
+	manager->GetComputer()->SetRotation(0, XM_PI / 2, 0);
+
+	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), 3, 3, 1);
 
 	//Now that we have walls, create the collision manager
 	collisionManager = Collisions(manager->GetWalls());
@@ -231,13 +233,9 @@ void MyDemoGame::OnResize()
 // Update your game state
 void MyDemoGame::UpdateScene(float dt)
 {
-	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, dt);
+	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, manager->GetWalls()[0]->GetWidth(), dt);
 
-	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
-
-	manager->GetGameController()->CheckBounds();
-
-	manager->GetParticleSystem()->Update(deviceContext, dt);
+	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
 }
 
 // Clear the screen, redraw everything, present
@@ -319,6 +317,12 @@ void MyDemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 void MyDemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	manager->GetGameController()->Serve();
+
+	if (manager->GetGameController()->GetGameState() == manager->GetGameController()->END)
+	{
+		manager->GetGameController()->ResetGame();
+	}
+
 	mouseDown = false;
 	ReleaseCapture();
 }
