@@ -3,6 +3,22 @@
 
 using namespace DirectX;
 
+struct Light
+{
+	Light()
+	{
+		ZeroMemory(this, sizeof(Light));
+	}
+	XMFLOAT4 ambient;
+	XMFLOAT4 diffuse;
+	XMFLOAT3 direction;
+	float range;
+	XMFLOAT3 position;
+	float cone;
+	XMFLOAT3 attenuation;
+	float lightType;
+};
+
 class Light
 {
 public:

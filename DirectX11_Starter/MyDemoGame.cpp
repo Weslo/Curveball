@@ -90,8 +90,14 @@ bool MyDemoGame::Init()
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
 
-	manager->GetPixelShaders()[1]->LoadShaderFile(L"PixelShader.cso");
-	manager->GetVertexShaders()[1]->LoadShaderFile(L"VertexShader.cso");
+	manager->GetPixelShaders()[1]->LoadShaderFile(L"BallPixelShader.cso");
+	manager->GetVertexShaders()[1]->LoadShaderFile(L"BallVertexShader.cso");
+
+	manager->CreatePixelShader();
+	manager->CreateVertexShader();
+
+	manager->GetPixelShaders()[2]->LoadShaderFile(L"PlayerPixelShader.cso");
+	manager->GetVertexShaders()[2]->LoadShaderFile(L"PlayerVertexShader.cso");
 
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
@@ -110,7 +116,7 @@ bool MyDemoGame::Init()
 	//ball																																					 
 	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
 	//paddle
-	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/wall.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
@@ -145,42 +151,8 @@ bool MyDemoGame::Init()
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
 
-	//Havent moved to game manager yet, need to finalize structs first
-	directionalLight = DirectionalLight
-	{
-		XMFLOAT4(.2f, .2f, .2f, 1),
-		XMFLOAT4(.6f, .6f, .6f, 1),
-		XMFLOAT3(.5f, .5f, .5f)
-	};
-
-	secondLight = DirectionalLight
-	{
-		XMFLOAT4(0.2f, 0.2f, 0.2f, 1),
-		XMFLOAT4(0.6f, 0.6f, 0.6f, 1),
-		XMFLOAT3(-.5f, -.5f, -.5f)
-	};
-
-
-	manager->GetPixelShaders()[0]->SetData(
-		"directionalLight",
-		&directionalLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[0]->SetData(
-		"secondDirectionalLight",
-		&secondLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[1]->SetData(
-		"directionalLight",
-		&directionalLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[1]->SetData(
-		"secondDirectionalLight",
-		&secondLight,
-		sizeof(DirectionalLight));
-
+	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, 0), 0);
+	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, 0), 0);
 
 	// Successfully initialized
 	return true;
@@ -267,11 +239,10 @@ void MyDemoGame::DrawScene()
 			manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
 		}
 		
-
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
-		manager->GetPixelShaders()[0]->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
-		manager->GetPixelShaders()[0]->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetGameEntities()[i]->GetMaterial()->GetSamplerState());
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
 

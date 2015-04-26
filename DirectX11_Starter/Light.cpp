@@ -18,7 +18,7 @@ Light::Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range,
 	att = _att;
 }
 
-Light::Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone)
+Light::Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos = XMFLOAT3(0,0,0), XMFLOAT3 _att = XMFLOAT3(0,0,0), XMFLOAT3 _dir = XMFLOAT3(0,0,0), float _cone = 0)
 {
 	lightType = _lightType;
 	ambient = _ambient;

@@ -7,17 +7,22 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 };
 
-struct DirectionalLight
+struct Light
 {
 	float4 ambient : AMBIENT;
 	float4 diffuse : DIFFUSE;
 	float3 direction : DIRECTION;
+	float range : TEXCOORD;
+	float3 position	: TEXCOORD1;
+	float cone : TEXCOORD2;
+	float3 attenuation : TEXCOORD3;
+	float lightType : TEXCOORD4;
 };
 
 cbuffer perLight : register(b0)
 {
-	DirectionalLight directionalLight;
-	DirectionalLight secondDirectionalLight;
+	int numLights;
+	Light lights[8];
 };
 
 Texture2D diffuseTexture : register(t0);

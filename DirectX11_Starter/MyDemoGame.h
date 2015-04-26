@@ -24,14 +24,6 @@ struct VertexShaderConstantBufferLayout
 	XMFLOAT4X4 projection;
 };
 
-// Directional light struct for shaders
-struct DirectionalLight
-{
-	XMFLOAT4 AmbientColor;
-	XMFLOAT4 DiffuseColor;
-	XMFLOAT3 Direction;
-};
-
 // Demo class which extends the base DirectXGame class
 class MyDemoGame : public DirectXGame
 {
