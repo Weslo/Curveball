@@ -36,9 +36,6 @@ GameManager::~GameManager()
 		ReleaseMacro(samplerStates[i]);
 	}
 
-	for (std::vector< SimpleVertexShader* >::iterator it = vertexShaders.begin(); it != vertexShaders.end(); ++it) { delete (*it); }
-	vertexShaders.clear();
-
 	delete gameController;
 }
 

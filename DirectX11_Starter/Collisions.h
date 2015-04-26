@@ -18,7 +18,6 @@ private:
 
 	std::vector<Boundary*> walls;
 
-
 	XMVECTOR NearestPointOnSphere(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos);
 	XMVECTOR NearestPointOnPlane(Ball* b, Boundary* w, XMVECTOR bPos, XMVECTOR wPos);
 	XMVECTOR NearestPointOnPlayer(Ball* b, Player* p);

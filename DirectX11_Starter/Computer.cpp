@@ -66,13 +66,14 @@ void Computer::TrackBall(Ball* b, XMFLOAT2 maxSpeed, int level, boolean loc, flo
 	//look ahead some number of frames based on the game level
 	//This will not take into account collisions for now
 	XMFLOAT2 computerPos = XMFLOAT2(position.x, position.y);
+	XMFLOAT2 zero = XMFLOAT2(0, 0);
 	XMVECTOR dif;
 
 	if (!loc)
 	{
 		XMFLOAT2 predictedLoc;
-		predictedLoc.x = b->GetPosition().x;// +(b->GetVelocity().x * dt * level);
-		predictedLoc.y = b->GetPosition().y;// +(b->GetVelocity().y * dt * level);
+		predictedLoc.x = b->GetPosition().x + (b->GetVelocity().x * dt * level);
+		predictedLoc.y = b->GetPosition().y + (b->GetVelocity().y * dt * level);
 
 		//Now find the difference between computer pos and predicted ball location
 		dif = XMLoadFloat2(&predictedLoc) - XMLoadFloat2(&computerPos);
@@ -80,7 +81,7 @@ void Computer::TrackBall(Ball* b, XMFLOAT2 maxSpeed, int level, boolean loc, flo
 
 	else
 	{
-		dif = XMLoadFloat2(new XMFLOAT2(0, 0)) - XMLoadFloat2(&computerPos);
+		dif = XMLoadFloat2(&zero) - XMLoadFloat2(&computerPos);
 	}
 	//Now that we have the difference, start moving that way. Limit the movement per frame based on game level
 	//Scale to a ratio to have it arrive at the predicted location x/y at the same time
@@ -102,16 +103,9 @@ void Computer::TrackBall(Ball* b, XMFLOAT2 maxSpeed, int level, boolean loc, flo
 	}
 	else
 	{
-		//HAVING TROUBLE WITH SIGNS. FIND A WAY TO KEEP THE SIGN WHEN CALCULATING HOW MUCH TO MOVE IN EACH DIRECTION
-
 		//Units horizontal per units vertical to move
-		hPerV = XMFLOAT2(XMVectorGetX(dif) / XMVectorGetY(dif), (XMVectorGetY(dif) / 1.0f));
+		hPerV = XMFLOAT2(XMVectorGetX(dif) / XMVectorGetX(XMVector2Length(dif)), XMVectorGetY(dif) / XMVectorGetX(XMVector2Length(dif)));
 		//Cant have a # larger than 1. If it needs to move more horizontal than vertical, scale horizontal back to 1 and vertical to units/horizontal
-		if (abs(hPerV.x) > 1)
-		{
-			hPerV.y /= hPerV.x;
-			hPerV.x /= hPerV.x;
-		}
 	}
 
 	//This is now the # of units to move this frame
