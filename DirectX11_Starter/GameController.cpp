@@ -17,13 +17,13 @@ GameController::GameController(Ball* _ball, Player* _player, Computer* _computer
 	cpuLives = cL;
 	playerLives = pL;
 	gameLevel = l;
+	gameState = SERVE;
 
 	ResetCourt();
 	CalcMaxSpeed();
 	CalcMaxAngularSpeed();
 	CalcMaxComputerSpeed();
 }
-
 
 GameController::~GameController()
 {
@@ -64,7 +64,16 @@ XMFLOAT3 GameController::GetMaxAngularSpeed()
 	return maxAngularSpeed;
 }
 
-//This can change later
+int GameController::GetGameState()
+{
+	return int(gameState);
+}
+
+void GameController::ChangeGameState(int s)
+{
+	gameState = static_cast<GameState>(s);
+}
+
 void GameController::CalcMaxSpeed()
 {
 	maxSpeed = XMFLOAT3(6.0f + gameLevel, 6.0f + gameLevel, 8.0f + (gameLevel * 2));
@@ -83,7 +92,11 @@ void GameController::CalcMaxComputerSpeed()
 
 void GameController::ResetCourt()
 {
-	player->SetPosition(XMFLOAT3(0, 0, -8));
+	if (gameState == ADVANCE)
+	{
+		cpuLives = 3;
+	}
+
 	computer->SetPosition(XMFLOAT3(0, 0, 8));
 	computer->SetVelocity(XMFLOAT3(0, 0, 0));
 	player->ResetPrevPos();
@@ -93,8 +106,31 @@ void GameController::ResetCourt()
 	
 	ball->SetVelocity(XMFLOAT3(0, 0, 0));
 	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));
-	
-	serving = true;
+
+	ChangeGameState(SERVE);
+
+	CalcMaxAngularSpeed();
+	CalcMaxSpeed();
+	CalcMaxComputerSpeed();
+}
+
+void GameController::ResetGame()
+{
+	cpuLives = 3;
+	playerLives = 3;
+	gameLevel = 1;
+
+	computer->SetPosition(XMFLOAT3(0, 0, 8));
+	computer->SetVelocity(XMFLOAT3(0, 0, 0));
+	player->ResetPrevPos();
+	computer->ResetPrevPos();
+
+	ball->SetPosition(XMFLOAT3(0, 0, -7));
+
+	ball->SetVelocity(XMFLOAT3(0, 0, 0));
+	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));
+
+	ChangeGameState(SERVE);
 
 	CalcMaxAngularSpeed();
 	CalcMaxSpeed();
@@ -103,11 +139,11 @@ void GameController::ResetCourt()
 
 void GameController::Serve()
 {
-	if (serving)
+	if (gameState == SERVE)
 	{
 		ball->ApplyVelocity(XMFLOAT3(0, 0, 8));
-		serving = false;
-	}
+		ChangeGameState(PLAY);
+	}	
 }
 
 void GameController::CheckBounds()
@@ -148,29 +184,69 @@ void GameController::LimitComputerPosition(float wallWidth)
 
 void GameController::Update(XMFLOAT3 mPos, XMFLOAT2 window, Camera* cam, float wallWidth, float dt)
 {
-	//update player and ball and stuff in here since it controls the game
-
-	//If the ball is set to arrive at the paddle in less than .1 seconds
-	if (abs(ball->GetPosition().z - player->GetPosition().z) / abs(ball->GetVelocity().z) < .15 && ball->GetVelocity().z < 0)
+	//Serve logic first
+	switch (gameState)
 	{
-		player->AddPrevPos(player->GetPosition());
-	}
+		case SERVE:
+		{
+			player->Update(mPos, window, cam);
+			break;
+		}
 
-	else if (abs(ball->GetPosition().z - computer->GetPosition().z) / abs(ball->GetVelocity().z) < .15 && ball->GetVelocity().z > 0)
-	{
-		computer->AddPrevPos(computer->GetPosition());
-	}
+		case PLAY:
+		{
+			//Check lives first
+			if (playerLives == 0)
+			{
+				ChangeGameState(END);
+				break;
+			}
+			else if (cpuLives == 0)
+			{
+				ChangeGameState(ADVANCE);
+				break;
+			}
 
-	ball->Update(dt);
-	player->Update(mPos, window, cam);
+			ball->Update(dt);
+			player->Update(mPos, window, cam);
 
-	if (!serving && ball->GetVelocity().z > 0)
-	{
-		computer->Update(ball, maxComputerSpeed, gameLevel, false, dt);
-		//LimitComputerPosition(wallWidth);
-	}
-	else
-	{
-		computer->TrackBall(ball, maxComputerSpeed, gameLevel, true, dt);
-	}
+			CheckBounds();
+
+			//If the ball is set to arrive at the paddle in less than .1 seconds
+			if (abs(ball->GetPosition().z - player->GetPosition().z) / abs(ball->GetVelocity().z) < .15 && ball->GetVelocity().z < 0)
+			{
+				player->AddPrevPos(player->GetPosition());
+			}
+
+			else if (abs(ball->GetPosition().z - computer->GetPosition().z) / abs(ball->GetVelocity().z) < .15 && ball->GetVelocity().z > 0)
+			{
+				computer->AddPrevPos(computer->GetPosition());
+			}
+
+			if (ball->GetVelocity().z > 0)
+			{
+				computer->Update(ball, maxComputerSpeed, gameLevel, false, dt);
+				//LimitComputerPosition(wallWidth);
+			}
+			else
+			{
+				computer->TrackBall(ball, maxComputerSpeed, gameLevel, true, dt);
+			}
+			break;
+		}
+		
+		case ADVANCE:
+		{
+			gameLevel++;
+			ResetCourt();
+			break;
+		}
+
+		case END:
+		{
+			player->Update(mPos, window, cam);
+			break;
+		}
+
+	};		
 }

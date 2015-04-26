@@ -226,8 +226,6 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, manager->GetWalls()[0]->GetWidth(), dt);
 
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
-
-	manager->GetGameController()->CheckBounds();
 }
 
 // Clear the screen, redraw everything, present
@@ -306,6 +304,12 @@ void MyDemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 void MyDemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	manager->GetGameController()->Serve();
+
+	if (manager->GetGameController()->GetGameState() == manager->GetGameController()->END)
+	{
+		manager->GetGameController()->ResetGame();
+	}
+
 	mouseDown = false;
 	ReleaseCapture();
 }
