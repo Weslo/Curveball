@@ -154,6 +154,25 @@ bool MyDemoGame::Init()
 	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, 0), 0);
 	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, 0), 0);
 
+	//Organize by shader for drawing
+	//Shaders come in pairs for now so this may need to change if that changes
+	for (int i = 0; i < manager->GetVertexShaders().size(); i++)
+	{
+		std::vector<GameEntity*> sorted;
+		for (int j = 0; j < manager->GetGameEntities().size(); j++)
+		{
+			if (manager->GetGameEntities()[j]->GetMaterial()->GetVertexShader() == manager->GetVertexShaders()[i])
+			{
+				sorted.push_back(manager->GetGameEntities()[j]);
+			}
+		}
+		manager->AddDraw(sorted);
+
+		for (std::vector< GameEntity* >::iterator it = sorted.begin(); it != sorted.end(); ++it) { delete (*it); }
+		sorted.clear();
+	}
+
+
 	// Successfully initialized
 	return true;
 }
@@ -221,6 +240,25 @@ void MyDemoGame::DrawScene()
 	//    input layout (different kinds of vertices) or the topology (different primitives)
 	//    between draws
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	for (int i = 0; i < manager->GetVertexShaders().size(); i++)
+	{
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Iterate through each mesh to perform draw operations on each
 	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)

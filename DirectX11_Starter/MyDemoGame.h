@@ -65,9 +65,5 @@ private:
 	// Main camera
 	Camera* camera;
 
-	// Lights
-	DirectionalLight directionalLight;
-	DirectionalLight secondLight;
-
 	XMFLOAT3 mousePos;
 };

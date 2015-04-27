@@ -5,10 +5,6 @@ using namespace DirectX;
 
 struct Light
 {
-	Light()
-	{
-		ZeroMemory(this, sizeof(Light));
-	}
 	XMFLOAT4 ambient;
 	XMFLOAT4 diffuse;
 	XMFLOAT3 direction;
@@ -19,16 +15,16 @@ struct Light
 	float lightType;
 };
 
-class Light
+class Lighting
 {
 public:
 	//For directional
-	Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range);
+	Lighting(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range);
 	//For Point
-	Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att);
+	Lighting(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att);
 	//For Spot
-	Light(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone);
-	~Light();
+	Lighting(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone);
+	~Lighting();
 
 	XMFLOAT3 GetPosition();
 	XMFLOAT4 GetAmbient();
