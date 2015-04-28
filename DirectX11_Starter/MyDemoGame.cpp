@@ -168,7 +168,6 @@ bool MyDemoGame::Init()
 		}
 		manager->AddDraw(sorted);
 
-		for (std::vector< GameEntity* >::iterator it = sorted.begin(); it != sorted.end(); ++it) { delete (*it); }
 		sorted.clear();
 	}
 
@@ -241,6 +240,13 @@ void MyDemoGame::DrawScene()
 	//    between draws
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	Light lArray[8];
+
+	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
+	{
+		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
+	}
+
 	for (unsigned int i = 0; i < manager->GetDrawByShader()[0].size(); i++)
 	{
 		// Copy CPU-side data to a single CPU-side structure
@@ -257,12 +263,17 @@ void MyDemoGame::DrawScene()
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetGameEntities()[i]->GetMaterial()->GetSamplerState());
 
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetData("lights", lArray, sizeof(Light));
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetFloat4("cameraPosition", XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f));
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetInt("numLights", manager->GetLights().size());
+
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
 
 		// Draw the mesh
 		manager->GetGameEntities()[i]->Draw(deviceContext);
 	}
 
+	/*
 	for (unsigned int i = 0; i < manager->GetDrawByShader()[1].size(); i++)
 	{
 		// Copy CPU-side data to a single CPU-side structure
@@ -284,13 +295,6 @@ void MyDemoGame::DrawScene()
 		manager->GetGameEntities()[i]->Draw(deviceContext);
 	}
 
-	Light lArray[8];
-
-	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
-	{
-		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
-	}
-
 	for (unsigned int i = 0; i < manager->GetDrawByShader()[2].size(); i++)
 	{
 		// Copy CPU-side data to a single CPU-side structure
@@ -305,7 +309,6 @@ void MyDemoGame::DrawScene()
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetGameEntities()[i]->GetMaterial()->GetSamplerState());
-		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetInt("numLights", manager->GetLights().size());
 
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetData("lights", lArray, sizeof(Light));
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetFloat4("cameraPosition", XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f));
@@ -316,7 +319,7 @@ void MyDemoGame::DrawScene()
 		// Draw the mesh
 		manager->GetGameEntities()[i]->Draw(deviceContext);
 	}
-
+	*/
 	// Present the buffer
 	//  - Puts the stuff on the screen
 	//  - Do this EXACTLY once per frame

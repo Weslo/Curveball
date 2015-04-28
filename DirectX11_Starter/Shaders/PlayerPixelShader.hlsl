@@ -25,7 +25,7 @@ struct Light
 	float3 position	: TEXCOORD1;
 	float cone : TEXCOORD2;
 	float3 attenuation : TEXCOORD3;
-	float lightType : TEXCOORD4;
+	int lightType : TEXCOORD4;
 };
 
 //L is vector from point to light
@@ -112,7 +112,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	float4 totalDiffuse = { 0, 0, 0, 0 };
 
-	[unroll]
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		float4 diffuse = { 0, 0, 0, 0 };

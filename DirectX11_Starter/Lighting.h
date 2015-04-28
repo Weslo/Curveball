@@ -12,7 +12,7 @@ struct Light
 	XMFLOAT3 position;
 	float cone;
 	XMFLOAT3 attenuation;
-	float lightType;
+	int lightType;
 };
 
 class Lighting
