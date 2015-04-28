@@ -1,4 +1,3 @@
-
 // The constant buffer that holds our "per model" data
 // - Each object you draw with this shader will probably have
 //   slightly different data (at least for the world matrix)

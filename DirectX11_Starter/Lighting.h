@@ -42,6 +42,8 @@ public:
 	void SetDirection(XMFLOAT3 _dir);
 	void SetCone(float _cone);
 
+	Light ConvertToStruct();
+
 private:
 	
 	//assign a num based on the type of light to make calculations easy, add more and comment as needed

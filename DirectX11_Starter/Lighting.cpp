@@ -104,3 +104,18 @@ void Lighting::SetCone(float _cone)
 {
 	cone = _cone;
 }
+
+Light Lighting::ConvertToStruct()
+{
+	Light l;
+	l.ambient = ambient;
+	l.attenuation = att;
+	l.cone = cone;
+	l.diffuse = diffuse;
+	l.direction = dir;
+	l.lightType = lightType;
+	l.position = pos;
+	l.range = range;
+
+	return l;
+}

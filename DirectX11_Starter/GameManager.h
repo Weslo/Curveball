@@ -54,6 +54,7 @@ public:
 	std::vector<GameEntity*> GetGameEntities();
 	GameController* GetGameController();
 	std::vector<std::vector<GameEntity*>> GetDrawByShader();
+	std::vector<Lighting*> GetLights();
 
 private:
 

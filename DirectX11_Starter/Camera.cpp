@@ -26,7 +26,7 @@ void Camera::RecalculateViewMatrix()
 	XMStoreFloat3(&direction, _direction);
 
 	XMVECTOR up = XMVectorSet(0, 1, 0, 0);
-	XMMATRIX V = XMMatrixLookToLH(GetPosition(), GetDirection(), up);
+	XMMATRIX V = XMMatrixLookToLH(XMLoadFloat3(&position), GetDirection(), up);
 	XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(V));
 }
 
@@ -53,9 +53,9 @@ void Camera::RecalculateProjectionMatrix(float aspectRatio)
 	XMStoreFloat4x4(&projectionMatrix, XMMatrixTranspose(P));
 }
 
-XMVECTOR Camera::GetPosition()
+XMFLOAT3 Camera::GetPosition()
 {
-	return XMLoadFloat3(&position);
+	return position;
 }
 
 void Camera::TranslateLocalAxis(XMVECTOR localDirection, float distance)
@@ -64,7 +64,7 @@ void Camera::TranslateLocalAxis(XMVECTOR localDirection, float distance)
 	XMVECTOR _direction = XMVector3Rotate(localDirection, rotationQuaternion);
 	_direction = XMVector3Normalize(_direction);
 	XMVECTOR translation = XMVectorScale(_direction, distance);
-	XMVECTOR _position = XMVectorAdd(GetPosition(), translation);
+	XMVECTOR _position = XMVectorAdd(XMLoadFloat3(&position), translation);
 	XMStoreFloat3(&position, _position);
 }
 
@@ -72,7 +72,7 @@ void Camera::TranslateWorldAxis(XMVECTOR worldDirection, float distance)
 {
 	XMVECTOR _direction = XMVector3Normalize(worldDirection);
 	XMVECTOR translation = XMVectorScale(_direction, distance);
-	XMVECTOR _position = XMVectorAdd(GetPosition(), translation);
+	XMVECTOR _position = XMVectorAdd(XMLoadFloat3(&position), translation);
 	XMStoreFloat3(&position, _position);
 }
 

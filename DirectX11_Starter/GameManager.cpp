@@ -112,6 +112,11 @@ std::vector<std::vector<GameEntity*>> GameManager::GetDrawByShader()
 {
 	return drawByShader;
 }
+
+std::vector<Lighting*> GameManager::GetLights()
+{
+	return lights;
+}
 #pragma endregion
 
 //Create the pixel shader
