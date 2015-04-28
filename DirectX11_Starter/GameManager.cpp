@@ -230,18 +230,7 @@ void GameManager::CreateLight(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffu
 {
 	Lighting* l;
 
-	if (_lightType == 0)
-	{
-		l = new Lighting(_lightType, _ambient, _diffuse, _range);
-	}
-	else if (_lightType == 1)
-	{
-		l = new Lighting(_lightType, _ambient, _diffuse, _range, _pos, _att);
-	}
-	else
-	{
-		l = new Lighting(_lightType, _ambient, _diffuse, _range, _pos, _att, _dir, _cone);
-	}
+	l = new Lighting(_lightType, _ambient, _diffuse, _range, _pos, _att, _dir, _cone);
 
 	lights.push_back(l);
 }

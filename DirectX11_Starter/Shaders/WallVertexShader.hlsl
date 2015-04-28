@@ -8,6 +8,7 @@ cbuffer perModel : register( b0 )
 	matrix view;
 	matrix projection;	
 	float2 lineBounds;
+	float4 cameraPosition;
 };
 
 // Defines what kind of data to expect as input
@@ -29,6 +30,7 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
 	float worldPos		: TEXCOORD2;
+	float4 cameraPosition : TEXCOORD3;
 };
 
 // The entry point for our vertex shader
@@ -40,6 +42,7 @@ VertexToPixel main( VertexShaderInput input )
 	// Calculate output position
 	matrix worldViewProj = mul(mul(world, view), projection);
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
+	output.cameraPosition = mul(cameraPosition, worldViewProj);
 	output.normal = mul(input.normal, (float3x3)world);
 	output.uv = input.uv;
 

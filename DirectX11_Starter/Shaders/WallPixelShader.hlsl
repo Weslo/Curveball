@@ -12,6 +12,7 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
 	float worldPos		: TEXCOORD2;
+	float4 cameraPosition : TEXCOORD3;
 };
 
 struct Light
@@ -32,7 +33,7 @@ float4 DoDiffuse(Light light, float3 L, float3 N)
 {
 	float NdotL = max(0, dot(N, L));
 	float4 diffuse = light.diffuse * NdotL;
-		return diffuse + light.ambient;
+	return diffuse + light.ambient;
 }
 
 //d is the distance from point to light source
@@ -64,7 +65,7 @@ float4 DoDirectionalLight(Light light, float3 V, float4 P, float3 N)
 
 	float3 L = -light.direction;
 
-		result = DoDiffuse(light, L, N);
+	result = DoDiffuse(light, L, N);
 
 	return result;
 }
@@ -113,45 +114,43 @@ float4 main(VertexToPixel input) : SV_TARGET
 		return float4(0.4f, 0.6f, 0.75f, 0.0f);
 	}
 
-
 	input.normal = normalize(input.normal);
 
 	float3 v = normalize(cameraPosition - input.position).xyz;
 
-		float4 totalDiffuse = { 0, 0, 0, 0 };
+	float4 totalDiffuse = { 0, 0, 0, 0 };
 
-		for (int i = 0; i < MAX_LIGHTS; i++)
+	for (int i = 0; i < numLights; i++)
+	{
+		float4 diffuse = { 0, 0, 0, 0 };
+				
+		switch (lights[i].lightType)
 		{
-			float4 diffuse = { 0, 0, 0, 0 };
-				if (i < numLights)
-				{
-					switch (lights[i].lightType)
-					{
-					case DIRECTIONAL_LIGHT:
-					{
-						diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
-					}
-					break;
-
-					case POINT_LIGHT:
-					{
-						diffuse = DoPointLight(lights[i], v, input.position, input.normal);
-					}
-					break;
-					case SPOT_LIGHT:
-					{
-						diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
-					}
-					break;
-					}
-				}
-			totalDiffuse += diffuse;
+		case DIRECTIONAL_LIGHT:
+		{
+			diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
 		}
+		break;
+
+		case POINT_LIGHT:
+		{
+			diffuse = DoPointLight(lights[i], v, input.position, input.normal);
+		}
+		break;
+		case SPOT_LIGHT:
+		{
+			diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
+		}
+		break;
+		}
+				
+		totalDiffuse += diffuse;
+	}
 
 	totalDiffuse = saturate(totalDiffuse);
 
 	// Texture
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.uv);
 
-		return surfaceColor * totalDiffuse;
+	return surfaceColor * totalDiffuse;
 }
