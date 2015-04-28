@@ -277,12 +277,10 @@ void MyDemoGame::DrawScene()
 			manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
 		}
 		
-
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
-		manager->GetPixelShaders()[0]->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
-		manager->GetPixelShaders()[0]->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
-
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
+		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
 		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
 
 		// Draw the mesh
