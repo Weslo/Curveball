@@ -90,8 +90,14 @@ bool MyDemoGame::Init()
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
 
-	manager->GetPixelShaders()[1]->LoadShaderFile(L"PixelShader.cso");
-	manager->GetVertexShaders()[1]->LoadShaderFile(L"VertexShader.cso");
+	manager->GetPixelShaders()[1]->LoadShaderFile(L"BallPixelShader.cso");
+	manager->GetVertexShaders()[1]->LoadShaderFile(L"BallVertexShader.cso");
+
+	manager->CreatePixelShader();
+	manager->CreateVertexShader();
+
+	manager->GetPixelShaders()[2]->LoadShaderFile(L"PlayerPixelShader.cso");
+	manager->GetVertexShaders()[2]->LoadShaderFile(L"PlayerVertexShader.cso");
 
 	// Create Particle shaders
 	manager->CreatePixelShader();
@@ -155,41 +161,25 @@ bool MyDemoGame::Init()
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
 
-	//Havent moved to game manager yet, need to finalize structs first
-	directionalLight = DirectionalLight
+	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
+	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
+
+	//Organize by shader for drawing
+	//Shaders come in pairs for now so this may need to change if that changes
+	for (unsigned int i = 0; i < manager->GetVertexShaders().size(); i++)
 	{
-		XMFLOAT4(.2f, .2f, .2f, 1),
-		XMFLOAT4(.6f, .6f, .6f, 1),
-		XMFLOAT3(.5f, .5f, .5f)
-	};
+		std::vector<GameEntity*> sorted;
+		for (unsigned int j = 0; j < manager->GetGameEntities().size(); j++)
+		{
+			if (manager->GetGameEntities()[j]->GetMaterial()->GetVertexShader() == manager->GetVertexShaders()[i])
+			{
+				sorted.push_back(manager->GetGameEntities()[j]);
+			}
+		}
+		manager->AddDraw(sorted);
 
-	secondLight = DirectionalLight
-	{
-		XMFLOAT4(0.2f, 0.2f, 0.2f, 1),
-		XMFLOAT4(0.6f, 0.6f, 0.6f, 1),
-		XMFLOAT3(-.5f, -.5f, -.5f)
-	};
-
-
-	manager->GetPixelShaders()[0]->SetData(
-		"directionalLight",
-		&directionalLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[0]->SetData(
-		"secondDirectionalLight",
-		&secondLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[1]->SetData(
-		"directionalLight",
-		&directionalLight,
-		sizeof(DirectionalLight));
-
-	manager->GetPixelShaders()[1]->SetData(
-		"secondDirectionalLight",
-		&secondLight,
-		sizeof(DirectionalLight));
+		sorted.clear();
+	}
 
 
 	// Successfully initialized
@@ -260,22 +250,37 @@ void MyDemoGame::DrawScene()
 	//    between draws
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Iterate through each mesh to perform draw operations on each
-	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)
+	Light lArray[8];
+
+	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
+	{
+		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
+	}
+
+	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
+	int size = manager->GetLights().size();
+
+	
+	for (int i = 0; i < manager->GetMaterials().size(); i++)
 	{
 
+		//manager->GetMaterials()[i].Initialize();
+
+	}
+
+
+
+	for (unsigned int i = 0; i < manager->GetDrawByShader()[0].size(); i++)
+	{
 		// Copy CPU-side data to a single CPU-side structure
 		//  - Allows us to send the data to the GPU buffer in one step
 		//  - Do this PER OBJECT, before drawing it
-		manager->GetGameEntities()[i]->RecalculateWorldMatrix();
-		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetGameEntities()[i]->GetWorldMatrix());
-		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
-		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
-
-		if (manager->GetGameEntities()[i] = dynamic_cast<Boundary*>(manager->GetGameEntities()[i]))
-		{
-			manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
-		}
+		manager->GetDrawByShader()[0][i]->RecalculateWorldMatrix();
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[0][i]->GetWorldMatrix());
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetData("cameraPosition", &camPos, sizeof(XMFLOAT4));
 		
 		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
 
@@ -286,10 +291,76 @@ void MyDemoGame::DrawScene()
 		// Draw the mesh
 		manager->GetGameEntities()[i]->Draw(deviceContext);
 
-		// Draw the particle system.
-		manager->GetParticleSystem()->Draw(deviceContext);
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetShader();
+
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetDrawByShader()[0][i]->GetMaterial()->GetResourceView());
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetDrawByShader()[0][i]->GetMaterial()->GetSamplerState());
+
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetPixelShader()->SetData("lights", &lArray, sizeof(Light) * 8);
+		
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetPixelShader()->SetData("numLights", &size, sizeof(float));
+
+		manager->GetDrawByShader()[0][i]->GetMaterial()->GetPixelShader()->SetShader();
+
+		// Draw the mesh
+		manager->GetDrawByShader()[0][i]->Draw(deviceContext);
 	}
 
+	
+	for (unsigned int i = 0; i < manager->GetDrawByShader()[1].size(); i++)
+	{
+		// Copy CPU-side data to a single CPU-side structure
+		//  - Allows us to send the data to the GPU buffer in one step
+		//  - Do this PER OBJECT, before drawing it
+		manager->GetDrawByShader()[1][i]->RecalculateWorldMatrix();
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[1][i]->GetWorldMatrix());
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+								   
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetVertexShader()->SetShader();
+								   
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetDrawByShader()[1][i]->GetMaterial()->GetResourceView());
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetDrawByShader()[1][i]->GetMaterial()->GetSamplerState());
+								   
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetPixelShader()->SetData("lights", &lArray, sizeof(Light));
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetPixelShader()->SetData("numLights", &size, sizeof(float));
+								   
+		manager->GetDrawByShader()[1][i]->GetMaterial()->GetPixelShader()->SetShader();
+								   
+		// Draw the mesh		   
+		manager->GetDrawByShader()[1][i]->Draw(deviceContext);
+	}
+	
+	for (unsigned int i = 0; i < manager->GetDrawByShader()[2].size(); i++)
+	{
+		// Copy CPU-side data to a single CPU-side structure
+		//  - Allows us to send the data to the GPU buffer in one step
+		//  - Do this PER OBJECT, before drawing it
+		manager->GetDrawByShader()[2][i]->RecalculateWorldMatrix();
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[2][i]->GetWorldMatrix());
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetData("cameraPosition", &camPos, sizeof(XMFLOAT4));
+								   
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetShader();
+								   
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetDrawByShader()[2][i]->GetMaterial()->GetResourceView());
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetDrawByShader()[2][i]->GetMaterial()->GetSamplerState());
+								   
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetPixelShader()->SetData("lights", &lArray, sizeof(Light) * 8);
+								   
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetPixelShader()->SetData("numLights", &size, sizeof(float));
+								   
+		manager->GetDrawByShader()[2][i]->GetMaterial()->GetPixelShader()->SetShader();
+								   
+		// Draw the mesh
+		manager->GetDrawByShader()[2][i]->Draw(deviceContext);
+	}
+
+	// Draw the particle system.
+	manager->GetParticleSystem()->Draw(deviceContext);
+	
 	// Present the buffer
 	//  - Puts the stuff on the screen
 	//  - Do this EXACTLY once per frame

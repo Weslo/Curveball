@@ -18,6 +18,9 @@ GameManager::~GameManager()
 	particleSystem->Shutdown();
 	delete particleSystem;
 
+	for (std::vector< Lighting* >::iterator it = lights.begin(); it != lights.end(); ++it) { delete (*it); }
+	lights.clear();
+
 	for (std::vector< Mesh* >::iterator it = meshes.begin(); it != meshes.end(); ++it) { delete (*it); }
 	meshes.clear();
 
@@ -112,6 +115,16 @@ Computer* GameManager::GetComputer()
 GameController* GameManager::GetGameController()
 {
 	return gameController;
+}
+
+std::vector<std::vector<GameEntity*>> GameManager::GetDrawByShader()
+{
+	return drawByShader;
+}
+
+std::vector<Lighting*> GameManager::GetLights()
+{
+	return lights;
 }
 #pragma endregion
 
@@ -227,4 +240,18 @@ void GameManager::CreateGameController(Ball* ball, Player* player)
 void GameManager::CreateGameController(Ball* ball, Player* player, Computer* computer, int cL, int pL, int l)
 {
 	gameController = new GameController(ball, player, computer, cL, pL, l);
+}
+
+void GameManager::CreateLight(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffuse, float _range, XMFLOAT3 _pos, XMFLOAT3 _att, XMFLOAT3 _dir, float _cone)
+{
+	Lighting* l;
+
+	l = new Lighting(_lightType, _ambient, _diffuse, _range, _pos, _att, _dir, _cone);
+
+	lights.push_back(l);
+}
+
+void GameManager::AddDraw(std::vector<GameEntity*> draw)
+{
+	drawByShader.push_back(draw);
 }

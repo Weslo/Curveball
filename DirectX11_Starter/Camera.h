@@ -18,7 +18,7 @@ public:
 
 	XMFLOAT4X4 GetInverseMatrix();
 
-	XMVECTOR GetPosition();
+	XMFLOAT3 GetPosition();
 	void TranslateLocalAxis(XMVECTOR localDirection, float distance);
 	void TranslateWorldAxis(XMVECTOR worldDirection, float distance);
 

@@ -1,4 +1,3 @@
-
 // The constant buffer that holds our "per model" data
 // - Each object you draw with this shader will probably have
 //   slightly different data (at least for the world matrix)
@@ -6,9 +5,7 @@ cbuffer perModel : register( b0 )
 {
 	matrix world;
 	matrix view;
-	matrix projection;	
-	float2 lineBounds;
-	float4 cameraPosition;
+	matrix projection;
 };
 
 // Defines what kind of data to expect as input
@@ -28,9 +25,7 @@ struct VertexToPixel
 	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
 	float3 normal		: NORMAL;
 	float2 uv			: TEXCOORD;
-	float2 lineBounds	: TEXCOORD1;
-	float worldPos		: TEXCOORD2;
-	float4 cameraPosition : TEXCOORD3;
+	float4 worldPos		: TEXCOORD1;
 };
 
 // The entry point for our vertex shader
@@ -42,13 +37,9 @@ VertexToPixel main( VertexShaderInput input )
 	// Calculate output position
 	matrix worldViewProj = mul(mul(world, view), projection);
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
-	output.cameraPosition = mul(cameraPosition, worldViewProj);
+	output.worldPos = mul(float4(input.position, 1.0f), world);
 	output.normal = mul(input.normal, (float3x3)world);
 	output.uv = input.uv;
-
-	output.worldPos = mul(float4(input.position, 1.0f), world).z;
-
-	output.lineBounds = lineBounds;
 
 	return output;
 }
