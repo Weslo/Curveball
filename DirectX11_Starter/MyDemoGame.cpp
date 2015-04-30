@@ -124,7 +124,7 @@ bool MyDemoGame::Init()
 	//paddle
 	manager->CreatePlayerMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
 	// particles
-	manager->CreateMaterial(manager->GetVertexShaders()[3], manager->GetPixelShaders()[3], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+	//manager->CreateMaterial(manager->GetVertexShaders()[3], manager->GetPixelShaders()[3], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/wall2.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
@@ -253,22 +253,12 @@ void MyDemoGame::UpdateScene(float dt)
 
 	
 	//Update the materials with necessary stuff
-	Light lArray[8];
-
-	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
-	{
-		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
-	}
-
 	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
-	int size = manager->GetLights().size();
 
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetCamPos(camPos);
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLArray(lArray , 2);
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBalls()[0]->GetPosition().z, manager->GetBalls()[0]->GetRadius()));
 
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
-	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray, 2);
 	
 }
 

@@ -20,11 +20,11 @@ struct Light
 	float4 ambient : AMBIENT;
 	float4 diffuse : DIFFUSE;
 	float3 direction : DIRECTION;
-	float range : TEXCOORD4;
-	float3 position	: TEXCOORD5;
-	float cone : TEXCOORD6;
-	float3 attenuation : TEXCOORD7;
-	int lightType : TEXCOORD8;
+	float range : TEXCOORD;
+	float3 position	: TEXCOORD1;
+	float cone : TEXCOORD2;
+	float3 attenuation : TEXCOORD3;
+	int lightType : TEXCOORD4;
 };
 
 //L is vector from point to light
