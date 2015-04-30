@@ -2,7 +2,9 @@
 #include "Ball.h"
 #include "Boundary.h"
 #include "Mesh.h"
-#include "Material.h"
+#include "WallMaterial.h"
+#include "BallMaterial.h"
+#include "PlayerMaterial.h"
 #include "SimpleShader.h"
 #include "Camera.h"
 #include "GameEntity.h"
@@ -21,6 +23,8 @@ public:
 	GameManager(ID3D11Device* d, ID3D11DeviceContext* dc);
 	~GameManager();
 
+	void InitGame();
+
 	//Methods to create Mesh, Ball, Player, Material, Walls
 	//To create additional crap, add more methods here
 	void CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma);
@@ -28,7 +32,13 @@ public:
 	void CreateBall(float r, Mesh*, Material*);
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
+
+	//Some of these may not be used, not sure yet.
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreateWallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreateBallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreatePlayerMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn);
 	void CreateParticleSystem(Material* material);
 	void CreatePixelShader();

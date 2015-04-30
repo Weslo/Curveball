@@ -11,12 +11,18 @@ GameManager::GameManager(ID3D11Device* d, ID3D11DeviceContext* dc)
 //Clean up all of the stuff created and managed here
 GameManager::~GameManager()
 {
+	for (unsigned int i = 0; i < drawByShader.size(); i++)
+	{
+		drawByShader[i].clear();
+	}
+	drawByShader.clear();
+
 	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
 	entities.clear();
 
 	// Release the particle system.
-	particleSystem->Shutdown();
-	delete particleSystem;
+	//particleSystem->Shutdown();
+	//delete particleSystem;
 
 	for (std::vector< Lighting* >::iterator it = lights.begin(); it != lights.end(); ++it) { delete (*it); }
 	lights.clear();
@@ -175,6 +181,24 @@ void GameManager::CreateSamplerState()
 void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
 {
 	materials.push_back(new Material(vs, ps, rv, ss));
+}
+
+//Create material given shaders to use and texture/sampler
+void GameManager::CreateWallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new WallMaterial(vs, ps, rv, ss));
+}
+
+//Create material given shaders to use and texture/sampler
+void GameManager::CreateBallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new BallMaterial(vs, ps, rv, ss));
+}
+
+//Create material given shaders to use and texture/sampler
+void GameManager::CreatePlayerMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new PlayerMaterial(vs, ps, rv, ss));
 }
 
 //Create material given shaders to use and texture/sampler

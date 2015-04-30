@@ -13,10 +13,13 @@ public:
 
 	ID3D11ShaderResourceView* GetResourceView();
 	ID3D11SamplerState* GetSamplerState();
-private:
+
+protected:
 	SimplePixelShader* pixelShader;
 	SimpleVertexShader* vertexShader;
 
 	ID3D11ShaderResourceView* resourceView;
 	ID3D11SamplerState* samplerState;
+
+	void PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj);
 };

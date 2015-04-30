@@ -102,8 +102,8 @@ bool MyDemoGame::Init()
 	// Create Particle shaders
 	manager->CreatePixelShader();
 	manager->CreateVertexShader();
-	manager->GetPixelShaders()[2]->LoadShaderFile(L"ParticlePixelShader.cso");
-	manager->GetVertexShaders()[2]->LoadShaderFile(L"ParticleVertexShader.cso");
+	manager->GetPixelShaders()[3]->LoadShaderFile(L"ParticlePixelShader.cso");
+	manager->GetVertexShaders()[3]->LoadShaderFile(L"ParticleVertexShader.cso");
 
 	//Load the textures you want to use
 	manager->CreateResourceView(L"../Assets/wall.png");
@@ -122,9 +122,9 @@ bool MyDemoGame::Init()
 	//ball																																					 
 	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
 	//paddle
-	manager->CreateMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
 	// particles
-	manager->CreateMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
+	manager->CreateMaterial(manager->GetVertexShaders()[3], manager->GetPixelShaders()[3], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
 
 	manager->CreateMesh("../Assets/wall.obj");
 	manager->CreateMesh("../Assets/sphere.obj");
@@ -143,7 +143,7 @@ bool MyDemoGame::Init()
 	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
 	
-	manager->CreateParticleSystem(manager->GetMaterials()[3]);
+	//manager->CreateParticleSystem(manager->GetMaterials()[3]);
 
 	manager->CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
 	manager->GetComputer()->SetRotation(0, XM_PI / 2, 0);
@@ -226,6 +226,11 @@ void MyDemoGame::UpdateScene(float dt)
 	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, manager->GetWalls()[0]->GetWidth(), dt);
 
 	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
+
+	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)
+	{
+		manager->GetGameEntities()[i]->RecalculateWorldMatrix();
+	}
 }
 
 // Clear the screen, redraw everything, present
@@ -263,33 +268,19 @@ void MyDemoGame::DrawScene()
 	
 	for (int i = 0; i < manager->GetMaterials().size(); i++)
 	{
-
 		//manager->GetMaterials()[i].Initialize();
-
 	}
-
-
 
 	for (unsigned int i = 0; i < manager->GetDrawByShader()[0].size(); i++)
 	{
 		// Copy CPU-side data to a single CPU-side structure
 		//  - Allows us to send the data to the GPU buffer in one step
 		//  - Do this PER OBJECT, before drawing it
-		manager->GetDrawByShader()[0][i]->RecalculateWorldMatrix();
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[0][i]->GetWorldMatrix());
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetFloat2("lineBounds", CalcDepthLines());
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetData("cameraPosition", &camPos, sizeof(XMFLOAT4));
-		
-		manager->GetGameEntities()[i]->GetMaterial()->GetVertexShader()->SetShader();
-
-		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShaderResourceView("diffuseTexture", manager->GetGameEntities()[i]->GetMaterial()->GetResourceView());
-		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetSamplerState("basicSampler", manager->GetSamplerStates()[0]);
-		manager->GetGameEntities()[i]->GetMaterial()->GetPixelShader()->SetShader();
-
-		// Draw the mesh
-		manager->GetGameEntities()[i]->Draw(deviceContext);
 
 		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetShader();
 
@@ -359,7 +350,7 @@ void MyDemoGame::DrawScene()
 	}
 
 	// Draw the particle system.
-	manager->GetParticleSystem()->Draw(deviceContext);
+	//manager->GetParticleSystem()->Draw(deviceContext);
 	
 	// Present the buffer
 	//  - Puts the stuff on the screen

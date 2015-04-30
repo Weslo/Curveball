@@ -69,6 +69,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="BallMaterial.cpp" />
     <ClCompile Include="Boundary.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collisions.cpp" />
@@ -85,10 +86,13 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerMaterial.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
+    <ClCompile Include="WallMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="BallMaterial.h" />
     <ClInclude Include="Boundary.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collisions.h" />
@@ -105,7 +109,9 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerMaterial.h" />
     <ClInclude Include="SimpleShader.h" />
+    <ClInclude Include="WallMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ParticlePixelShader.hlsl">
