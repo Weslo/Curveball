@@ -28,13 +28,12 @@ void PlayerMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X
 {
 	Material::PrepareToDraw(world, view, proj);
 
-	vertexShader->SetFloat4("cameraPosition", camPos);
-	
 	vertexShader->SetShader();
 
 	pixelShader->SetShaderResourceView("diffuseTexture", resourceView);
 	pixelShader->SetSamplerState("basicSampler", samplerState);
 	pixelShader->SetData("lights", &lArray, sizeof(Light)* 8);
+	pixelShader->SetFloat4("cameraPosition", camPos);
 	pixelShader->SetFloat("numLights", arraySize);
 
 	pixelShader->SetShader();

@@ -12,7 +12,6 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
 	float worldPos		: TEXCOORD2;
-	float4 cameraPosition : TEXCOORD3;
 };
 
 struct Light
@@ -96,7 +95,7 @@ float4 DoSpotLight(Light light, float3 V, float4 P, float3 N)
 	return result;
 }
 
-cbuffer perLight : register(b1)
+cbuffer perLight : register(b0)
 {
 	int numLights;
 	float4 cameraPosition;
