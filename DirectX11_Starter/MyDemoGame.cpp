@@ -276,7 +276,7 @@ void MyDemoGame::UpdateScene(float dt)
 void MyDemoGame::DrawScene()
 {
 	// Background color (Cornflower Blue in this case) for clearing
-	const float color[4] = {0.4f, 0.6f, 0.75f, 0.0f};
+	const float color[4] = {0.1f, 0.1f, 0.1f, 0.0f};
 
 	// Clear the buffer (erases what's on the screen)
 	//  - Do this once per frame
@@ -294,40 +294,20 @@ void MyDemoGame::DrawScene()
 	//    between draws
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	
-	for (unsigned int i = 0; i < manager->GetDrawByShader()[0].size(); i++)
+	// Iterate by material
+	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
 	{
-		// Copy CPU-side data to a single CPU-side structure
-		//  - Allows us to send the data to the GPU buffer in one step
-		//  - Do this PER OBJECT, before drawing it
-		manager->GetDrawByShader()[0][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[0][i]->GetWorldMatrix());
-		static_cast<WallMaterial*>(manager->GetMaterials()[0])->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
-		// Draw the mesh
-		manager->GetDrawByShader()[0][i]->Draw(deviceContext);
-	}
-	
-	for (unsigned int i = 0; i < manager->GetDrawByShader()[1].size(); i++)
-	{
-		// Copy CPU-side data to a single CPU-side structure
-		//  - Allows us to send the data to the GPU buffer in one step
-		//  - Do this PER OBJECT, before drawing it
-		manager->GetDrawByShader()[1][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[1][i]->GetWorldMatrix());
-		static_cast<BallMaterial*>(manager->GetMaterials()[1])->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
-		// Draw the mesh		   
-		manager->GetDrawByShader()[1][i]->Draw(deviceContext);
-	}
-	
-	
-	for (unsigned int i = 0; i < manager->GetDrawByShader()[2].size(); i++)
-	{
-		// Copy CPU-side data to a single CPU-side structure
-		//  - Allows us to send the data to the GPU buffer in one step
-		//  - Do this PER OBJECT, before drawing it
-		manager->GetDrawByShader()[2][i]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[2][i]->GetWorldMatrix());
-		static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
-						   
-		// Draw the mesh
-		manager->GetDrawByShader()[2][i]->Draw(deviceContext);
+		// Iterate by entity.
+		for (unsigned int j = 0; j < manager->GetDrawByShader()[i].size(); j++)
+		{
+			// Copy CPU-side data to a single CPU-side structure
+			//  - Allows us to send the data to the GPU buffer in one step
+			//  - Do this PER OBJECT, before drawing it
+			manager->GetDrawByShader()[i][j]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[i][j]->GetWorldMatrix());
+			manager->GetMaterials()[i]->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+			// Draw the mesh
+			manager->GetDrawByShader()[i][j]->Draw(deviceContext);
+		}
 	}
 
 	// Draw the particle system.

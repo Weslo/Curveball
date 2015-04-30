@@ -54,8 +54,10 @@ void WallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 
 
 	pixelShader->SetShaderResourceView("diffuseTexture", resourceView);
 	pixelShader->SetSamplerState("basicSampler", samplerState);
-	pixelShader->SetData("lights", &lArray, sizeof(Light) * 8);
+
 	pixelShader->SetFloat("numLights", arraySize);
+	pixelShader->SetFloat4("cameraPosition", camPos);
+	pixelShader->SetData("lights", &lArray, sizeof(Light) * 8);
 
 	//pixelShader->SetShader();
 }

@@ -96,7 +96,7 @@ float4 DoSpotLight(Light light, float3 V, float4 P, float3 N)
 	return result;
 }
 
-cbuffer perLight : register(b0)
+cbuffer perLight : register(b1)
 {
 	int numLights;
 	float4 cameraPosition;
