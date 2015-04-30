@@ -34,5 +34,6 @@ ID3D11SamplerState* Material::GetSamplerState()
 
 void Material::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
 {
-
+	vertexShader->SetMatrix4x4("view", view);
+	vertexShader->SetMatrix4x4("projection", proj);
 }

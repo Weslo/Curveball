@@ -21,7 +21,7 @@ struct Light
 	float4 ambient : AMBIENT;
 	float4 diffuse : DIFFUSE;
 	float3 direction : DIRECTION;
-	float range : TEXCOORD;
+	float range : TEXCOORD0;
 	float3 position	: TEXCOORD1;
 	float cone : TEXCOORD2;
 	float3 attenuation : TEXCOORD3;
