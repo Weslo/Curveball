@@ -53,9 +53,9 @@ GameManager::~GameManager()
 }
 
 #pragma region Getters
-std::vector<Ball*> GameManager::GetBalls()
+Ball* GameManager::GetBall()
 {
-	return balls;
+	return ball;
 }
 
 std::vector<Boundary*> GameManager::GetWalls()
@@ -225,8 +225,8 @@ void GameManager::CreateMesh(char* file)
 //Create ball given radius, mesh, and material
 void GameManager::CreateBall(float r, Mesh* m, Material* ma)
 {
-	balls.push_back(new Ball(r, m, ma));
-	entities.push_back(balls[balls.size() - 1]);
+	ball = new Ball(r, m, ma);
+	entities.push_back(ball);
 }
 
 //Create a wall given length, width, position, rotation, scale, up vector, mesh, and material
@@ -278,4 +278,117 @@ void GameManager::CreateLight(int _lightType, XMFLOAT4 _ambient, XMFLOAT4 _diffu
 void GameManager::AddDraw(std::vector<GameEntity*> draw)
 {
 	drawByShader.push_back(draw);
+}
+
+void GameManager::InitGame(Camera* cam)
+{
+	CreatePixelShader();
+	CreateVertexShader();
+
+	pixelShaders[0]->LoadShaderFile(L"WallPixelShader.cso");
+	vertexShaders[0]->LoadShaderFile(L"WallVertexShader.cso");
+
+	CreatePixelShader();
+	CreateVertexShader();
+
+	pixelShaders[1]->LoadShaderFile(L"BallPixelShader.cso");
+	vertexShaders[1]->LoadShaderFile(L"BallVertexShader.cso");
+
+	CreatePixelShader();
+	CreateVertexShader();
+
+	pixelShaders[2]->LoadShaderFile(L"PlayerPixelShader.cso");
+	vertexShaders[2]->LoadShaderFile(L"PlayerVertexShader.cso");
+
+	CreatePixelShader();
+	CreateVertexShader();
+	pixelShaders[3]->LoadShaderFile(L"ParticlePixelShader.cso");
+	vertexShaders[3]->LoadShaderFile(L"ParticleVertexShader.cso");
+
+	CreateResourceView(L"../Assets/wall.png");
+	CreateResourceView(L"../Assets/ballTex.png");
+	CreateResourceView(L"../Assets/paddle.png");
+
+	//Create the sampler state.
+	//Could take U/V/W states later for more options for textures
+	CreateSamplerState();
+
+
+	//Create materials and meshes that will be used based on previous creation of stuff
+
+	//walls
+	CreateWallMaterial(vertexShaders[0], pixelShaders[0], resourceViews[0], samplerStates[0]);
+	//ball																																					 
+	CreateBallMaterial(vertexShaders[1], pixelShaders[1], resourceViews[1],samplerStates[0]);
+	//paddle
+	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
+	// particles
+	//CreateMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
+
+	CreateMesh("../Assets/wall2.obj");
+	CreateMesh("../Assets/sphere.obj");
+	CreateMesh("../Assets/paddle.obj");
+
+	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
+
+	CreateWall(16, 4, XMFLOAT3(0, -2.0f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), meshes[0], materials[0]); //Bottom wall
+	CreateWall(16, 4, XMFLOAT3(-2.0f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), meshes[0], materials[0]); //Left Wall
+	CreateWall(16, 4, XMFLOAT3(0, 2.0f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), meshes[0], materials[0]); //Top wall
+	CreateWall(16, 4, XMFLOAT3(2.0f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), meshes[0], materials[0]); //Right wall
+
+	CreateBall(.25f, meshes[1], materials[1]);
+	ball->SetScale(.5f, .5f, .5f);
+
+	CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, meshes[2], materials[2]);
+	player->SetRotation(0, XM_PI / 2, 0);
+
+	//CreateParticleSystem(material[3]);
+
+	CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, meshes[2], materials[2]);
+	computer->SetRotation(0, XM_PI / 2, 0);
+
+	CreateGameController(ball, player, computer, 3, 3, 1);
+
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
+	CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
+
+	//Organize by shader for drawing
+	//Shaders come in pairs for now so this may need to change if that changes
+	for (unsigned int i = 0; i < vertexShaders.size(); i++)
+	{
+		std::vector<GameEntity*> sorted;
+		for (unsigned int j = 0; j < entities.size(); j++)
+		{
+			if (entities[j]->GetMaterial()->GetVertexShader() == vertexShaders[i])
+			{
+				sorted.push_back(entities[j]);
+			}
+		}
+		AddDraw(sorted);
+
+		sorted.clear();
+	}
+
+	//Update the materials with necessary stuff
+	Light lArray[8];
+
+	for (unsigned int i = 0; i < GetLights().size(); i++)
+	{
+		lArray[i] = lights[i]->ConvertToStruct();
+	}
+
+	XMFLOAT4 camPos = XMFLOAT4(cam->GetPosition().x, cam->GetPosition().y, cam->GetPosition().z, 1.0f);
+
+	static_cast<WallMaterial*>(materials[0])->SetCamPos(camPos);
+	static_cast<WallMaterial*>(materials[0])->SetLArray(lArray);
+	static_cast<WallMaterial*>(materials[0])->SetLineBounds(XMFLOAT2(ball->GetPosition().z, ball->GetRadius()));
+
+	static_cast<PlayerMaterial*>(materials[2])->SetCamPos(camPos);
+	static_cast<PlayerMaterial*>(materials[2])->SetLArray(lArray);
 }

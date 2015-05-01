@@ -23,7 +23,7 @@ public:
 	GameManager(ID3D11Device* d, ID3D11DeviceContext* dc);
 	~GameManager();
 
-	void InitGame();
+	void InitGame(Camera* cam);
 
 	//Methods to create Mesh, Ball, Player, Material, Walls
 	//To create additional crap, add more methods here
@@ -54,7 +54,7 @@ public:
 	//Lots of getters. Setters are generally in the object's class.
 	Player* GetPlayer();
 	Computer* GetComputer();
-	std::vector<Ball*> GetBalls();
+	Ball* GetBall();
 	std::vector<Boundary*> GetWalls();
 	std::vector<Mesh*> GetMeshes();
 	std::vector<Material*> GetMaterials();
@@ -80,7 +80,7 @@ private:
 
 	Player* player;
 	Computer* computer;
-	std::vector<Ball*> balls;
+	Ball* ball;
 	std::vector<Boundary*> walls;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;

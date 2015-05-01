@@ -77,147 +77,21 @@ bool MyDemoGame::Init()
 	if( !DirectXGame::Init() )
 		return false;
 
+	//
 	manager = new GameManager(device, deviceContext);
-
-
-	//Create shaders first
-	manager->CreatePixelShader();
-	manager->CreateVertexShader();
-
-	manager->GetPixelShaders()[0]->LoadShaderFile(L"WallPixelShader.cso");
-	manager->GetVertexShaders()[0]->LoadShaderFile(L"WallVertexShader.cso");
-
-	manager->CreatePixelShader();
-	manager->CreateVertexShader();
-
-	manager->GetPixelShaders()[1]->LoadShaderFile(L"BallPixelShader.cso");
-	manager->GetVertexShaders()[1]->LoadShaderFile(L"BallVertexShader.cso");
-
-	manager->CreatePixelShader();
-	manager->CreateVertexShader();
-
-	manager->GetPixelShaders()[2]->LoadShaderFile(L"PlayerPixelShader.cso");
-	manager->GetVertexShaders()[2]->LoadShaderFile(L"PlayerVertexShader.cso");
-
-	// Create Particle shaders
-	manager->CreatePixelShader();
-	manager->CreateVertexShader();
-	manager->GetPixelShaders()[3]->LoadShaderFile(L"ParticlePixelShader.cso");
-	manager->GetVertexShaders()[3]->LoadShaderFile(L"ParticleVertexShader.cso");
-
-	//Load the textures you want to use
-	manager->CreateResourceView(L"../Assets/wall.png");
-	manager->CreateResourceView(L"../Assets/ballTex.png");
-	manager->CreateResourceView(L"../Assets/paddle.png");
-
-	//Create the sampler state.
-	//Could take U/V/W states later for more options for textures
-	manager->CreateSamplerState();
-
-
-	//Create materials and meshes that will be used based on previous creation of stuff
-
-	//walls
-	manager->CreateWallMaterial(manager->GetVertexShaders()[0], manager->GetPixelShaders()[0], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
-	//ball																																					 
-	manager->CreateBallMaterial(manager->GetVertexShaders()[1], manager->GetPixelShaders()[1], manager->GetResourceViews()[1], manager->GetSamplerStates()[0]);
-	//paddle
-	manager->CreatePlayerMaterial(manager->GetVertexShaders()[2], manager->GetPixelShaders()[2], manager->GetResourceViews()[2], manager->GetSamplerStates()[0]);
-	// particles
-	//manager->CreateMaterial(manager->GetVertexShaders()[3], manager->GetPixelShaders()[3], manager->GetResourceViews()[0], manager->GetSamplerStates()[0]);
-
-	manager->CreateMesh("../Assets/wall2.obj");
-	manager->CreateMesh("../Assets/sphere.obj");
-	manager->CreateMesh("../Assets/paddle.obj");
-
-	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
-
-	manager->CreateWall(16, 4, XMFLOAT3(0, -2.0f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Bottom wall
-	manager->CreateWall(16, 4, XMFLOAT3(-2.0f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Left Wall
-	manager->CreateWall(16, 4, XMFLOAT3(0, 2.0f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Top wall
-	manager->CreateWall(16, 4, XMFLOAT3(2.0f, 0, 0), XMFLOAT3(0, 0, XM_PI / 2), wScale, XMFLOAT3(-1.0, 0, 0), manager->GetMeshes()[0], manager->GetMaterials()[0]); //Right wall
-	
-	manager->CreateBall(.25f, manager->GetMeshes()[1], manager->GetMaterials()[1]);
-	manager->GetBalls()[0]->SetScale(.5f, .5f, .5f);
-
-	manager->CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
-	manager->GetPlayer()->SetRotation(0, XM_PI/2, 0);
-	
-	//manager->CreateParticleSystem(manager->GetMaterials()[3]);
-
-	manager->CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, manager->GetMeshes()[2], manager->GetMaterials()[2]);
-	manager->GetComputer()->SetRotation(0, XM_PI / 2, 0);
-
-	manager->CreateGameController(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), 3, 3, 1);
-
-	//Now that we have walls, create the collision manager
-	collisionManager = Collisions(manager->GetWalls());
-
-	// Load pixel & vertex shaders, and then create an input layout
-	LoadShadersAndInputLayout();
 
 	//Create the camera in here. Pain in the ass to do in game manager
 	camera = new Camera();
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
 
-	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
-	manager->CreateLight(0, XMFLOAT4(.3f, .3f, .3f, 1.0f), XMFLOAT4(.7f, .7f, .7f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
-
-	//Organize by shader for drawing
-	//Shaders come in pairs for now so this may need to change if that changes
-	for (unsigned int i = 0; i < manager->GetVertexShaders().size(); i++)
-	{
-		std::vector<GameEntity*> sorted;
-		for (unsigned int j = 0; j < manager->GetGameEntities().size(); j++)
-		{
-			if (manager->GetGameEntities()[j]->GetMaterial()->GetVertexShader() == manager->GetVertexShaders()[i])
-			{
-				sorted.push_back(manager->GetGameEntities()[j]);
-			}
-		}
-		manager->AddDraw(sorted);
-
-		sorted.clear();
-	}
-
-
-	//Update the materials with necessary stuff
-	Light lArray[8];
-
-	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
-	{
-		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
-	}
-
-	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
-
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetCamPos(camPos);
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLArray(lArray);
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBalls()[0]->GetPosition().z, manager->GetBalls()[0]->GetRadius()));
-
-	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
-	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray);
+	manager->InitGame(camera);
+	//Now that we have walls, create the collision manager
+	collisionManager = Collisions(manager->GetWalls());
 
 	// Successfully initialized
 	return true;
 }
-
-// Loads shaders from compiled shader object (.cso) files, and uses the
-// vertex shader to create an input layout which is needed when sending
-// vertex data to the device
-void MyDemoGame::LoadShadersAndInputLayout()
-{
-	// Set up the vertex layout description
-	// This has to match the vertex input layout in the vertex shader
-	// We can't set up the input layout yet since we need the actual vert shader
-	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,	0, 0,	D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,	D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-}
-
 
 #pragma endregion
 
@@ -242,7 +116,7 @@ void MyDemoGame::UpdateScene(float dt)
 {
 	manager->GetGameController()->Update(mousePos, XMFLOAT2((float)windowWidth, (float)windowHeight), camera, manager->GetWalls()[0]->GetWidth(), dt);
 
-	collisionManager.DetectCollisions(manager->GetBalls()[0], manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
+	collisionManager.DetectCollisions(manager->GetBall(), manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
 
 	//Recalc all world matricies
 	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)
@@ -255,7 +129,7 @@ void MyDemoGame::UpdateScene(float dt)
 	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
 
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetCamPos(camPos);
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBalls()[0]->GetPosition().z, manager->GetBalls()[0]->GetRadius()));
+	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBall()->GetPosition().z, manager->GetBall()->GetRadius()));
 
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
 	
@@ -353,8 +227,8 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 XMFLOAT2 MyDemoGame::CalcDepthLines()
 {
 	std::vector<XMFLOAT2> toReturn;
-	float pos = manager->GetBalls()[0]->GetPosition().z - manager->GetBalls()[0]->GetRadius() / 2;
-	float pos2 = manager->GetBalls()[0]->GetPosition().z + manager->GetBalls()[0]->GetRadius() / 2;
+	float pos = manager->GetBall()->GetPosition().z - manager->GetBall()->GetRadius() / 2;
+	float pos2 = manager->GetBall()->GetPosition().z + manager->GetBall()->GetRadius() / 2;
 
 	return XMFLOAT2(pos, pos2);
 }
