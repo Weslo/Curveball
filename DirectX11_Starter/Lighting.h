@@ -5,6 +5,7 @@ using namespace DirectX;
 
 struct Light
 {
+	Light() : lightType(99){}
 	XMFLOAT4 ambient;
 	XMFLOAT4 diffuse;
 	XMFLOAT3 direction;

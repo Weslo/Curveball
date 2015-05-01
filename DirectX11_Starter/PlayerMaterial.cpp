@@ -9,14 +9,12 @@ PlayerMaterial::~PlayerMaterial()
 {
 }
 
-void PlayerMaterial::SetLArray(Light l[], int size)
+void PlayerMaterial::SetLArray(Light l[])
 {
 	for (int i = 0; i < 8; i++)
 	{
 		lArray[i] = l[i];
 	}
-
-	arraySize = size;
 }
 
 void PlayerMaterial::SetCamPos(DirectX::XMFLOAT4 _camPos)
@@ -32,9 +30,7 @@ void PlayerMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X
 
 	pixelShader->SetShaderResourceView("diffuseTexture", resourceView);
 	pixelShader->SetSamplerState("basicSampler", samplerState);
-	pixelShader->SetData("lights", &lArray, sizeof(Light)* 8);
 	pixelShader->SetFloat4("cameraPosition", camPos);
-	pixelShader->SetFloat("numLights", arraySize);
-
+	pixelShader->SetData("lights", &lArray, sizeof(lArray));
 	pixelShader->SetShader();
 }

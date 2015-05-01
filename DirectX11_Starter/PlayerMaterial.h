@@ -10,7 +10,7 @@ public:
 	~PlayerMaterial();
 
 	void SetCamPos(DirectX::XMFLOAT4 _camPos);	
-	void SetLArray(Light l[], int size);
+	void SetLArray(Light l[]);
 	void PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj);
 
 private:
@@ -18,7 +18,5 @@ private:
 	DirectX::XMFLOAT4 camPos;
 
 	Light lArray[8];
-	float arraySize;
-
 };
 

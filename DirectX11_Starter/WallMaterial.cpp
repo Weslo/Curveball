@@ -33,14 +33,12 @@ DirectX::XMFLOAT2 WallMaterial::CalcLineBounds(DirectX::XMFLOAT2 ballInfo)
 	return DirectX::XMFLOAT2(pos, pos2);
 }
 
-void WallMaterial::SetLArray(Light l[], int size)
+void WallMaterial::SetLArray(Light l[])
 {
 	for (int i = 0; i < 8; i++)
 	{
 		lArray[i] = l[i];
 	}
-
-	arraySize = size;
 }
 
 void WallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
@@ -53,8 +51,6 @@ void WallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 
 	pixelShader->SetShaderResourceView("diffuseTexture", resourceView);
 	pixelShader->SetSamplerState("basicSampler", samplerState);
 	pixelShader->SetFloat4("cameraPosition", camPos);
-	pixelShader->SetFloat("numLights", arraySize);
-	pixelShader->SetData("lights", &lArray, sizeof(Light) * 8);
-
+	pixelShader->SetData("lights", &lArray, sizeof(lArray));
 	pixelShader->SetShader();
 }

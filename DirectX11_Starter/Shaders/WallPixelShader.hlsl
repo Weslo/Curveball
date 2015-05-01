@@ -16,14 +16,19 @@ struct VertexToPixel
 
 struct Light
 {
-	float4 ambient : AMBIENT;
-	float4 diffuse : DIFFUSE;
-	float3 direction : DIRECTION;
-	float range : TEXCOORD;
-	float3 position	: TEXCOORD1;
-	float cone : TEXCOORD2;
-	float3 attenuation : TEXCOORD3;
-	int lightType : TEXCOORD4;
+	float4 ambient;
+	//------
+	float4 diffuse;
+	//------
+	float3 direction;
+	float range;
+	//------
+	float3 position;
+	float cone;
+	//------
+	float3 attenuation;
+	int lightType;
+	//------
 };
 
 //L is vector from point to light
@@ -97,7 +102,6 @@ float4 DoSpotLight(Light light, float3 V, float4 P, float3 N)
 
 cbuffer perLight : register(b0)
 {
-	int numLights;
 	float4 cameraPosition;
 	Light lights[MAX_LIGHTS];
 };
@@ -119,30 +123,32 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	float4 totalDiffuse = { 0, 0, 0, 0 };
 
-	for (int i = 0; i < numLights; i++)
+	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		float4 diffuse = { 0, 0, 0, 0 };
 				
-		switch (lights[i].lightType)
+		if (lights[i].lightType != 99)
 		{
-		case DIRECTIONAL_LIGHT:
-		{
-			diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
-		}
-		break;
+			switch (lights[i].lightType)
+			{
+			case DIRECTIONAL_LIGHT:
+			{
+									  diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
+			}
+				break;
 
-		case POINT_LIGHT:
-		{
-			diffuse = DoPointLight(lights[i], v, input.position, input.normal);
+			case POINT_LIGHT:
+			{
+								diffuse = DoPointLight(lights[i], v, input.position, input.normal);
+			}
+				break;
+			case SPOT_LIGHT:
+			{
+							   diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
+			}
+				break;
+			}
 		}
-		break;
-		case SPOT_LIGHT:
-		{
-			diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
-		}
-		break;
-		}
-				
 		totalDiffuse += diffuse;
 	}
 

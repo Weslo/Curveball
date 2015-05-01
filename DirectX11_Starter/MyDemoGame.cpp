@@ -191,14 +191,13 @@ bool MyDemoGame::Init()
 	}
 
 	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
-	int size = manager->GetLights().size();
 
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetCamPos(camPos);
-	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLArray(lArray, 2);
+	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLArray(lArray);
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBalls()[0]->GetPosition().z, manager->GetBalls()[0]->GetRadius()));
 
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
-	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray, 2);
+	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray);
 
 	// Successfully initialized
 	return true;
