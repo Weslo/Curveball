@@ -276,6 +276,7 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w, XMFLOAT3 maxSpeed, XMFLOA
 	//Don't set z or it will just bounce around the middle
 	b->SetVelocity(newVel);
 	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
+	b->RandomizeBallLight();
 }
 
 //Reflect the ball when a collision is found
@@ -341,6 +342,7 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOA
 	//Don't set z or it will just bounce around the middle
 	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
 	p->ResetPrevPos();
+	b->RandomizeBallLight();
 }
 
 //Reflect the ball when a collision is found
@@ -406,4 +408,5 @@ void Collisions::ReflectBallComputer(Ball* b, Computer* c, XMFLOAT3 maxSpeed, XM
 	//Don't set z or it will just bounce around the middle
 	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
 	c->ResetPrevPos();
+	b->RandomizeBallLight();
 }

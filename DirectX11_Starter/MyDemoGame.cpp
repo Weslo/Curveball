@@ -77,7 +77,8 @@ bool MyDemoGame::Init()
 	if( !DirectXGame::Init() )
 		return false;
 
-	//
+	srand(time(NULL));
+
 	manager = new GameManager(device, deviceContext);
 
 	//Create the camera in here. Pain in the ass to do in game manager

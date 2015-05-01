@@ -4,6 +4,7 @@
 #include "DirectXGame.h"
 #include "GameManager.h"
 #include "Vertex.h"
+#include <ctime>
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
