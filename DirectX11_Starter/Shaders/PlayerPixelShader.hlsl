@@ -107,7 +107,7 @@ cbuffer perLight : register(b0)
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
-	float3 v = normalize(cameraPosition - input.position).xyz;
+	float3 v = normalize(cameraPosition - input.world).xyz;
 
 	float4 totalDiffuse = { 0, 0, 0, 0 };
 
@@ -121,18 +121,18 @@ float4 main(VertexToPixel input) : SV_TARGET
 			{
 				case DIRECTIONAL_LIGHT:
 				{
-									diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
+					diffuse = DoDirectionalLight(lights[i], v, input.world, input.normal);
 				}
 				break;
 
 				case POINT_LIGHT:
 				{
-									diffuse = DoPointLight(lights[i], v, input.position, input.normal);
+					diffuse = DoPointLight(lights[i], v, input.world, input.normal);
 				}
 				break;
 				case SPOT_LIGHT:
 				{
-								   diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
+					diffuse = DoSpotLight(lights[i], v, input.world, input.normal);
 				}
 				break;
 			}

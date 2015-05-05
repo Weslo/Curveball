@@ -52,6 +52,11 @@ void Ball::SetBallLight(Lighting* l)
 	ballLight = l;
 }
 
+void Ball::SetBallLightPos(XMFLOAT3 p)
+{
+	ballLight->SetPosition(p);
+}
+
 void Ball::ApplyVelocity(XMFLOAT3 v)
 {
 	velocity = XMFLOAT3(velocity.x + v.x, velocity.y + v.y, velocity.z + v.z);

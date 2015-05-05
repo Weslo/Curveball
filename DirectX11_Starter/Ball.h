@@ -17,6 +17,7 @@ public:
 	void SetVelocity(XMFLOAT3 v);
 	void SetAngularVelocity(XMFLOAT3);
 	void SetBallLight(Lighting* l);
+	void SetBallLightPos(XMFLOAT3 p);
 	void AddPrevPos(XMFLOAT3 p);
 	void ResetPrevPos();
 	void ApplyVelocity(XMFLOAT3 v);

@@ -19,7 +19,6 @@ GameController::GameController(Ball* _ball, Player* _player, Computer* _computer
 	gameLevel = l;
 	gameState = SERVE;
 
-	ResetCourt();
 	CalcMaxSpeed();
 	CalcMaxAngularSpeed();
 	CalcMaxComputerSpeed();
@@ -103,7 +102,8 @@ void GameController::ResetCourt()
 	computer->ResetPrevPos();
 
 	ball->SetPosition(XMFLOAT3(0, 0, -7));
-	
+	ball->SetBallLightPos(ball->GetPosition());
+
 	ball->SetVelocity(XMFLOAT3(0, 0, 0));
 	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));
 
@@ -126,6 +126,7 @@ void GameController::ResetGame()
 	computer->ResetPrevPos();
 
 	ball->SetPosition(XMFLOAT3(0, 0, -7));
+	ball->SetBallLightPos(ball->GetPosition());
 
 	ball->SetVelocity(XMFLOAT3(0, 0, 0));
 	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));

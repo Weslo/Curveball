@@ -11,7 +11,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
-	float worldPos		: TEXCOORD2;
+	float4 worldPos		: TEXCOORD2;
 };
 
 struct Light
@@ -49,29 +49,21 @@ float DoAttenuation(Light light, float d)
 //V is the view vector, P is the point being shaded, N is the surface normal
 float4 DoPointLight(Light light, float3 V, float4 P, float3 N)
 {
-	float4 result;
-
 	float3 L = (float4(light.position, 1.0f) - P).xyz;
 	float distance = length(L);
 	L = L / distance;
 
 	float attenuation = DoAttenuation(light, distance);
 
-	result = DoDiffuse(light, L, N) * attenuation;
-
-	return result;
+	return (DoDiffuse(light, L, N) * attenuation);
 }
 
 //V is the view vector, P is the point being shaded, N is the surface normal
 float4 DoDirectionalLight(Light light, float3 V, float4 P, float3 N)
 {
-	float4 result;
-
 	float3 L = -light.direction;
 
-	result = DoDiffuse(light, L, N);
-
-	return result;
+	return  DoDiffuse(light, L, N);
 }
 
 //L is the light direction
@@ -86,8 +78,6 @@ float DoSpotCone(Light light, float3 L)
 //V is the view vector, P is the point being shaded, N is the surface normal
 float4 DoSpotLight(Light light, float3 V, float4 P, float3 N)
 {
-	float4 result;
-
 	float3 L = (float4(light.position, 1.0f) - P).xyz;
 		float distance = length(L);
 	L = L / distance;
@@ -95,9 +85,7 @@ float4 DoSpotLight(Light light, float3 V, float4 P, float3 N)
 	float attenuation = DoAttenuation(light, distance);
 	float spotIntensity = DoSpotCone(light, L);
 
-	result = DoDiffuse(light, L, N) * attenuation * spotIntensity;
-
-	return result;
+	return (DoDiffuse(light, L, N) * attenuation * spotIntensity);
 }
 
 cbuffer perLight : register(b0)
@@ -112,14 +100,14 @@ SamplerState basicSampler : register(s0);
 // Entry point for this pixel shader
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	if (input.worldPos > input.lineBounds.x && input.worldPos < input.lineBounds.y)
+	if (input.worldPos.z > input.lineBounds.x && input.worldPos.z < input.lineBounds.y)
 	{
 		return float4(0.4f, 0.6f, 0.75f, 0.0f);
 	}
 
 	input.normal = normalize(input.normal);
 
-	float3 v = normalize(cameraPosition - input.position).xyz;
+	float3 v = normalize(cameraPosition - input.worldPos).xyz;
 
 	float4 totalDiffuse = { 0, 0, 0, 0 };
 
@@ -133,18 +121,18 @@ float4 main(VertexToPixel input) : SV_TARGET
 			{
 			case DIRECTIONAL_LIGHT:
 			{
-									  diffuse = DoDirectionalLight(lights[i], v, input.position, input.normal);
+									  diffuse = DoDirectionalLight(lights[i], v, input.worldPos, input.normal);
 			}
 				break;
 
 			case POINT_LIGHT:
 			{
-								diffuse = DoPointLight(lights[i], v, input.position, input.normal);
+								diffuse = DoPointLight(lights[i], v, input.worldPos, input.normal);
 			}
 				break;
 			case SPOT_LIGHT:
 			{
-							   diffuse = DoSpotLight(lights[i], v, input.position, input.normal);
+							   diffuse = DoSpotLight(lights[i], v, input.worldPos, input.normal);
 			}
 				break;
 			}
@@ -156,6 +144,11 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	// Texture
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.uv);
+
+	if (surfaceColor.x == 0 && surfaceColor.y == 0 && surfaceColor.z == 0)
+	{
+		return totalDiffuse;
+	}
 
 	return surfaceColor * totalDiffuse;
 }

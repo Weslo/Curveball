@@ -28,7 +28,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
-	float worldPos		: TEXCOORD2;
+	float4 worldPos		: TEXCOORD2;
 };
 
 // The entry point for our vertex shader
@@ -43,7 +43,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.normal = mul(input.normal, (float3x3)world);
 	output.uv = input.uv;
 
-	output.worldPos = mul(float4(input.position, 1.0f), world).z;
+	output.worldPos = mul(float4(input.position, 1.0f), world);
 
 	output.lineBounds = lineBounds;
 

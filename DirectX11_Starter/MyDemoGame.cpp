@@ -90,6 +90,8 @@ bool MyDemoGame::Init()
 	//Now that we have walls, create the collision manager
 	collisionManager = Collisions(manager->GetWalls());
 
+	manager->GetGameController()->ResetCourt();
+
 	// Successfully initialized
 	return true;
 }
@@ -127,12 +129,21 @@ void MyDemoGame::UpdateScene(float dt)
 
 	
 	//Update the materials with necessary stuff
+	Light lArray[8];
+
+	for (unsigned int i = 0; i < manager->GetLights().size(); i++)
+	{
+		lArray[i] = manager->GetLights()[i]->ConvertToStruct();
+	}
+
 	XMFLOAT4 camPos = XMFLOAT4(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z, 1.0f);
 
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetCamPos(camPos);
+	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLArray(lArray);
 	static_cast<WallMaterial*>(manager->GetMaterials()[0])->SetLineBounds(XMFLOAT2(manager->GetBall()->GetPosition().z, manager->GetBall()->GetRadius()));
 
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
+	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray);
 	
 }
 
