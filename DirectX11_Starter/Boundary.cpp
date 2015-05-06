@@ -5,6 +5,7 @@ Boundary::Boundary(int l, int w, Mesh* m, Material* ma) : GameEntity(m, ma)
 {
 	length = l;
 	width = w;
+	SetColor(XMFLOAT4(1, 1, 1, 1));
 }
 
 
@@ -30,4 +31,17 @@ int Boundary::GetWidth()
 void Boundary::SetUp(XMFLOAT3 u)
 {
 	up = u;
+}
+
+void Boundary::SetColor(XMFLOAT4 _color)
+{
+	color = _color;
+	material->GetVertexShader()->SetFloat4("tint", color);
+}
+
+void Boundary::RandomizeColor()
+{
+	int index = rand() % 3;
+	XMFLOAT4 _color = XMFLOAT4(index == 0, index == 1, index == 2, 1.0f);
+	SetColor(_color);
 }

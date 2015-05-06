@@ -12,6 +12,7 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
 	float4 worldPos		: TEXCOORD2;
+	float4 tint			: COLOR;
 };
 
 struct Light
@@ -149,6 +150,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	{
 		return totalDiffuse;
 	}
+
+	surfaceColor += input.tint * 0.5f;
 
 	return surfaceColor * totalDiffuse;
 }

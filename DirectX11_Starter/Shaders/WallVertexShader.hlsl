@@ -8,6 +8,7 @@ cbuffer perModel : register( b0 )
 	matrix view;
 	matrix projection;	
 	float2 lineBounds;
+	float4 tint;
 };
 
 // Defines what kind of data to expect as input
@@ -29,6 +30,7 @@ struct VertexToPixel
 	float2 uv			: TEXCOORD;
 	float2 lineBounds	: TEXCOORD1;
 	float4 worldPos		: TEXCOORD2;
+	float4 tint			: COLOR;
 };
 
 // The entry point for our vertex shader
@@ -46,6 +48,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.worldPos = mul(float4(input.position, 1.0f), world);
 
 	output.lineBounds = lineBounds;
+	output.tint = tint;
 
 	return output;
 }

@@ -277,6 +277,7 @@ void Collisions::ReflectBallWall(Ball* b, Boundary* w, XMFLOAT3 maxSpeed, XMFLOA
 	b->SetVelocity(newVel);
 	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
 	b->RandomizeBallLight();
+	w->RandomizeColor();
 }
 
 //Reflect the ball when a collision is found
