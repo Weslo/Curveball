@@ -112,6 +112,10 @@ Material* GameEntity::GetMaterial()
 
 #pragma region Rendering
 
+void GameEntity::PrepareToDraw()
+{
+}
+
 void GameEntity::Draw(ID3D11DeviceContext* deviceContext)
 {
 	mesh->DrawMesh(deviceContext);

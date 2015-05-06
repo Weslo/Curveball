@@ -36,6 +36,7 @@ public:
 	Material* GetMaterial();
 
 	// Rendering
+	virtual void PrepareToDraw();
 	void Draw(ID3D11DeviceContext* deviceContext);
 protected:
 	// Transformations

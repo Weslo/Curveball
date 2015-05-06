@@ -12,6 +12,7 @@ public:
 	void SetUp(XMFLOAT3 u);
 	void SetColor(XMFLOAT4 _color);
 	void RandomizeColor();
+	void PrepareToDraw();
 
 private:
 	void CalcLength();

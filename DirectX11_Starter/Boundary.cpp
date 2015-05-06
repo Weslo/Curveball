@@ -36,7 +36,6 @@ void Boundary::SetUp(XMFLOAT3 u)
 void Boundary::SetColor(XMFLOAT4 _color)
 {
 	color = _color;
-	material->GetVertexShader()->SetFloat4("tint", color);
 }
 
 void Boundary::RandomizeColor()
@@ -44,4 +43,9 @@ void Boundary::RandomizeColor()
 	int index = rand() % 3;
 	XMFLOAT4 _color = XMFLOAT4(index == 0, index == 1, index == 2, 1.0f);
 	SetColor(_color);
+}
+
+void Boundary::PrepareToDraw()
+{
+	material->GetVertexShader()->SetFloat4("tint", color);
 }
