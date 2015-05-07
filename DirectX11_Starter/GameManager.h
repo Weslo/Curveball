@@ -5,6 +5,7 @@
 #include "WallMaterial.h"
 #include "BallMaterial.h"
 #include "PlayerMaterial.h"
+#include "ParticleMaterial.h"
 #include "SimpleShader.h"
 #include "Camera.h"
 #include "GameEntity.h"
@@ -38,6 +39,7 @@ public:
 	void CreateWallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreateBallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreatePlayerMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreateParticleMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn);
 	void CreateParticleSystem(Material* material);

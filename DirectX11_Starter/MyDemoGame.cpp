@@ -121,12 +121,13 @@ void MyDemoGame::UpdateScene(float dt)
 
 	collisionManager.DetectCollisions(manager->GetBall(), manager->GetPlayer(), manager->GetComputer(), manager->GetGameController()->GetMaxSpeed(), manager->GetGameController()->GetMaxAngularSpeed(), dt);
 
+	camera->Update(dt);
+
 	//Recalc all world matricies
 	for (unsigned int i = 0; i < manager->GetGameEntities().size(); i++)
 	{
 		manager->GetGameEntities()[i]->RecalculateWorldMatrix();
 	}
-
 	
 	//Update the materials with necessary stuff
 	Light lArray[8];
@@ -145,13 +146,14 @@ void MyDemoGame::UpdateScene(float dt)
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray);
 	
+	manager->GetParticleSystem()->Update(deviceContext, dt);
 }
 
 // Clear the screen, redraw everything, present
 void MyDemoGame::DrawScene()
 {
 	// Background color (Cornflower Blue in this case) for clearing
-	const float color[4] = {0.1f, 0.1f, 0.1f, 0.0f};
+	const float color[4] = {0.9f, 0.9f, 0.9f, 0.0f};
 
 	// Clear the buffer (erases what's on the screen)
 	//  - Do this once per frame
@@ -187,7 +189,9 @@ void MyDemoGame::DrawScene()
 	}
 
 	// Draw the particle system.
-	//manager->GetParticleSystem()->Draw(deviceContext);
+	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetBall()->GetWorldMatrix());
+	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+	manager->GetParticleSystem()->Draw(deviceContext);
 	
 	// Present the buffer
 	//  - Puts the stuff on the screen

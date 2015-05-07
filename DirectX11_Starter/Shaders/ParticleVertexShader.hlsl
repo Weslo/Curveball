@@ -1,8 +1,8 @@
-cbuffer MatrixBuffer
+cbuffer perModel
 {
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
+	matrix world;
+	matrix view;
+	matrix projection;
 };
 
 struct VertexInputType
@@ -25,9 +25,9 @@ PixelInputType main(VertexInputType input)
 
 	input.position.w = 1.0f;
 
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	output.position = mul(input.position, world);
+	output.position = mul(output.position, view);
+	output.position = mul(output.position, projection);
 
 	output.tex = input.tex;
 	output.color = input.color;
