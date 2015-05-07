@@ -178,9 +178,8 @@ void MyDemoGame::DrawScene()
 			// Copy CPU-side data to a single CPU-side structure
 			//  - Allows us to send the data to the GPU buffer in one step
 			//  - Do this PER OBJECT, before drawing it
-			manager->GetDrawByShader()[i][j]->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetDrawByShader()[i][j]->GetWorldMatrix());
 			manager->GetDrawByShader()[i][j]->PrepareToDraw();
-			manager->GetMaterials()[i]->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+			manager->GetMaterials()[i]->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 			// Draw the mesh
 			manager->GetDrawByShader()[i][j]->Draw(deviceContext);
 		}

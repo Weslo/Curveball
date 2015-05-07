@@ -146,11 +146,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// Texture
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.uv);
 
-	if (surfaceColor.x == 0 && surfaceColor.y == 0 && surfaceColor.z == 0)
-	{
-		return totalDiffuse;
-	}
-
 	surfaceColor += input.tint * 0.5f;
 
 	return surfaceColor * totalDiffuse;

@@ -11,7 +11,7 @@ public:
 
 	void SetCamPos(DirectX::XMFLOAT4 _camPos);	
 	void SetLArray(Light l[]);
-	void PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj);
+	void PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj);
 
 private:
 

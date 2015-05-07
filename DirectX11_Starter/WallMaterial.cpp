@@ -41,9 +41,9 @@ void WallMaterial::SetLArray(Light l[])
 	}
 }
 
-void WallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
+void WallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
 {
-	Material::PrepareToDraw(world, view, proj);
+	Material::PrepareToDraw(view, proj);
 
 	vertexShader->SetFloat2("lineBounds", lineBounds);
 	vertexShader->SetShader();

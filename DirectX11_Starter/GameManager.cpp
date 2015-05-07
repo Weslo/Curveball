@@ -355,8 +355,9 @@ void GameManager::InitGame(Camera* cam)
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	CreateLight(0, XMFLOAT4(.1f, .1f, .1f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
-	CreateLight(0, XMFLOAT4(.1f, .1f, .1f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
+	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
+	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
+	CreateLight(0, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), XMFLOAT4(.3f, .3f, .3f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(0.0f, 0.0f, 1.0f), 0);
 	CreateLight(1, XMFLOAT4(.2f, 0.0f, 0.0f, 1.0f), XMFLOAT4(0.7f, 0.0f, 0.0f, 1.0f), 0, ball->GetPosition(), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0), 0);
 
 	ball->SetBallLight(lights[lights.size() - 1]);

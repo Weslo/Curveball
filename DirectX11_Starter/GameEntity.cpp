@@ -114,6 +114,7 @@ Material* GameEntity::GetMaterial()
 
 void GameEntity::PrepareToDraw()
 {
+	material->GetVertexShader()->SetMatrix4x4("world", worldMatrix);
 }
 
 void GameEntity::Draw(ID3D11DeviceContext* deviceContext)

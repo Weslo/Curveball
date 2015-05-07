@@ -47,5 +47,6 @@ void Boundary::RandomizeColor()
 
 void Boundary::PrepareToDraw()
 {
+	GameEntity::PrepareToDraw();
 	material->GetVertexShader()->SetFloat4("tint", color);
 }

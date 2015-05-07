@@ -22,9 +22,9 @@ void PlayerMaterial::SetCamPos(DirectX::XMFLOAT4 _camPos)
 	camPos = _camPos;
 }
 
-void PlayerMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
+void PlayerMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
 {
-	Material::PrepareToDraw(world, view, proj);
+	Material::PrepareToDraw(view, proj);
 
 	vertexShader->SetShader();
 
