@@ -10,6 +10,19 @@ BallMaterial::~BallMaterial()
 {
 }
 
+void BallMaterial::SetLArray(Light l[])
+{
+	for (int i = 0; i < 8; i++)
+	{
+		lArray[i] = l[i];
+	}
+}
+
+void BallMaterial::SetCamPos(DirectX::XMFLOAT4 _camPos)
+{
+	camPos = _camPos;
+}
+
 void BallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
 {
 	Material::PrepareToDraw(view, proj);
@@ -18,6 +31,7 @@ void BallMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 p
 
 	pixelShader->SetShaderResourceView("diffuseTexture", resourceView);
 	pixelShader->SetSamplerState("basicSampler", samplerState);
-
+	pixelShader->SetFloat4("cameraPosition", camPos);
+	pixelShader->SetData("lights", &lArray, sizeof(lArray));
 	pixelShader->SetShader();
 }

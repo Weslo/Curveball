@@ -82,7 +82,7 @@ bool MyDemoGame::Init()
 	manager = new GameManager(device, deviceContext);
 
 	//Create the camera in here. Pain in the ass to do in game manager
-	camera = new Camera();
+	camera = new Camera(XMFLOAT3(0.0f, 0.0f, -13.0f));
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
 
@@ -144,7 +144,13 @@ void MyDemoGame::UpdateScene(float dt)
 
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetCamPos(camPos);
 	static_cast<PlayerMaterial*>(manager->GetMaterials()[2])->SetLArray(lArray);
-	
+
+	lArray[0].lightType = 99;
+	lArray[1].lightType = 99;
+	lArray[3].lightType = 99;
+
+	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetCamPos(camPos);
+	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetLArray(lArray);
 }
 
 // Clear the screen, redraw everything, present

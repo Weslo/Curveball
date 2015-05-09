@@ -357,7 +357,7 @@ void GameManager::InitGame(Camera* cam)
 
 	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
 	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
-	CreateLight(0, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), XMFLOAT4(.3f, .3f, .3f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(0.0f, 0.0f, 1.0f), 0);
+	CreateLight(0, XMFLOAT4(.08f, .08f, .08f, 1.0f), XMFLOAT4(.4f, .4f, .4f, 1.0f), 20, XMFLOAT3(0, 0, -10), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), 10);
 	CreateLight(1, XMFLOAT4(.2f, 0.0f, 0.0f, 1.0f), XMFLOAT4(0.7f, 0.0f, 0.0f, 1.0f), 0, ball->GetPosition(), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0), 0);
 
 	ball->SetBallLight(lights[lights.size() - 1]);
@@ -382,7 +382,7 @@ void GameManager::InitGame(Camera* cam)
 	//Update the materials with necessary stuff
 	Light lArray[8];
 
-	for (unsigned int i = 0; i < GetLights().size(); i++)
+	for (unsigned int i = 0; i < lights.size(); i++)
 	{
 		lArray[i] = lights[i]->ConvertToStruct();
 	}
@@ -395,4 +395,11 @@ void GameManager::InitGame(Camera* cam)
 
 	static_cast<PlayerMaterial*>(materials[2])->SetCamPos(camPos);
 	static_cast<PlayerMaterial*>(materials[2])->SetLArray(lArray);
+
+	lArray[0].lightType = 99;
+	lArray[1].lightType = 99;
+	lArray[3].lightType = 99;
+
+	static_cast<BallMaterial*>(materials[1])->SetCamPos(camPos);
+	static_cast<BallMaterial*>(materials[1])->SetLArray(lArray);
 }
