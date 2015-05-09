@@ -21,8 +21,8 @@ GameManager::~GameManager()
 	entities.clear();
 
 	// Release the particle system.
-	//particleSystem->Shutdown();
-	//delete particleSystem;
+	particleSystem->Shutdown();
+	delete particleSystem;
 
 	for (std::vector< Lighting* >::iterator it = lights.begin(); it != lights.end(); ++it) { delete (*it); }
 	lights.clear();
@@ -323,7 +323,7 @@ void GameManager::InitGame(Camera* cam)
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
 	// particles
-	//CreateMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
+	CreateMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
 
 	CreateMesh("../Assets/wall2.obj");
 	CreateMesh("../Assets/sphere.obj");
@@ -342,7 +342,7 @@ void GameManager::InitGame(Camera* cam)
 	CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, meshes[2], materials[2]);
 	player->SetRotation(0, XM_PI / 2, 0);
 
-	//CreateParticleSystem(material[3]);
+	CreateParticleSystem(materials[3]);
 
 	CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, meshes[2], materials[2]);
 	computer->SetRotation(0, XM_PI / 2, 0);

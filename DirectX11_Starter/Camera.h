@@ -7,7 +7,7 @@ using namespace DirectX;
 class Camera
 {
 public:
-	Camera();
+	Camera(XMFLOAT3 pos);
 	~Camera();
 
 	XMFLOAT4X4 GetViewMatrix();

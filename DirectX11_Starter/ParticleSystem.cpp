@@ -116,7 +116,7 @@ bool ParticleSystem::InitializeParticleSystem()
 	particleVelocityVariation = 0.2f;
 
 	// Set the size of the particles.
-	particleSize = 0.2f;
+	particleSize = 0.1f;
 
 	// Set system emission rate.
 	particlesPerSecond = 250.0f;
@@ -255,6 +255,12 @@ void ParticleSystem::ShutdownBuffers()
 	{
 		vertexBuffer->Release();
 		vertexBuffer = 0;
+	}
+
+	if (vertices)
+	{
+		delete[] vertices;
+		vertices = 0;
 	}
 }
 

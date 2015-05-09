@@ -1,11 +1,11 @@
 #include "Camera.h"
 #include "Windows.h"
 
-Camera::Camera()
+Camera::Camera(XMFLOAT3 pos)
 {
 	xRotation = 0;
 	yRotation = 0;
-	position = XMFLOAT3(0, 0, -15);
+	position = pos;
 	direction = XMFLOAT3(0, 0, 1);
 }
 
