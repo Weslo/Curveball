@@ -37,7 +37,8 @@ XMFLOAT4X4 Camera::GetProjectionMatrix()
 
 XMFLOAT4X4 Camera::GetInverseMatrix()
 {
-	XMMATRIX _inverse = XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&projectionMatrix), XMLoadFloat4x4(&viewMatrix)), XMMatrixIdentity());
+	// Multiply matrices and take inverse
+	XMMATRIX _inverse = XMMatrixInverse(NULL, XMMatrixMultiply(XMLoadFloat4x4(&projectionMatrix), XMLoadFloat4x4(&viewMatrix)));
 	XMFLOAT4X4 inverse;
 	XMStoreFloat4x4(&inverse, _inverse);
 	return inverse;

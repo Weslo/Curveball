@@ -151,6 +151,8 @@ void MyDemoGame::UpdateScene(float dt)
 
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetCamPos(camPos);
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetLArray(lArray);
+
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { DestroyWindow(hMainWnd); }	// Exit the game
 }
 
 // Clear the screen, redraw everything, present

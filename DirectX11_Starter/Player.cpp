@@ -42,11 +42,20 @@ float Player::GetHeight()
 
 XMFLOAT3 Player::projectMouseToWorld(XMFLOAT3 mousePos, XMFLOAT2 window, Camera* camera)
 {
-	XMVECTOR cubeCoord = XMVectorSet((mousePos.x / window.x * 2) - 1, -((mousePos.y / window.y * 2) - 1), 10, 0);
+	// http://webglfactory.blogspot.com/2011/05/how-to-convert-world-to-screen.html
+
+	XMVECTOR cubeCoord = XMVectorSet(
+		2 * (mousePos.x / window.x) - 1,
+		-2 * (mousePos.y / window.y) + 1,
+		0,	// Keep zero
+		0);
 	XMMATRIX cameraInverse = XMLoadFloat4x4(&(camera->GetInverseMatrix()));
 	XMVECTOR worldPos = XMVector3Transform(cubeCoord, cameraInverse);
+
 	XMFLOAT3 _worldPos;
 	XMStoreFloat3(&_worldPos, worldPos);
+	_worldPos.x *= 5;
+	_worldPos.y *= 5; // This somehow scales it to work
 	return _worldPos;
 }
 
@@ -57,7 +66,7 @@ void Player::AddPrevPos(XMFLOAT3 p)
 
 void Player::CalcVelocity(float dt)
 {
-	velocity = XMFLOAT3((position.x - prevPosition[0].x) / .1, (position.y - prevPosition[0].y) / .1, 0);
+	velocity = XMFLOAT3((position.x - prevPosition[0].x) / .1f, (position.y - prevPosition[0].y) / .1f, 0);
 }
 
 void Player::ResetPrevPos()
