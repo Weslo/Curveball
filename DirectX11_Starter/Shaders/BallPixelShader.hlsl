@@ -68,7 +68,6 @@ float DoAttenuation(Light light, float d)
 LightResult DoPointLight(Light light, float3 V, float4 P, float3 N)
 {
 	LightResult res;
-
 	float3 L = (float4(light.position, 1.0f) - P).xyz;
 	float distance = length(L);
 	L = L / distance;
@@ -110,6 +109,7 @@ LightResult DoSpotLight(Light light, float3 V, float4 P, float3 N)
 
 	float3 L = (float4(light.position, 1.0f) - P).xyz;
 	float distance = length(L);
+	//distance *= (distance / light.range);
 	L = L / distance;
 
 	float attenuation = DoAttenuation(light, distance);

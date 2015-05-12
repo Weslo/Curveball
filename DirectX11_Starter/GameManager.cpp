@@ -357,7 +357,7 @@ void GameManager::InitGame(Camera* cam)
 
 	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
 	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
-	CreateLight(0, XMFLOAT4(.08f, .08f, .08f, 1.0f), XMFLOAT4(.4f, .4f, .4f, 1.0f), 20, XMFLOAT3(0, 0, -10), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), 10);
+	CreateLight(2, XMFLOAT4(.15f, .15f, .15f, 1.0f), XMFLOAT4(.4f, .4f, .4f, 1.0f), 30, XMFLOAT3(0, 0, -10), XMFLOAT3(0.4f, .04f, .0004f), XMFLOAT3(0.0f, 0.0f, 1.0f), .3);
 	CreateLight(1, XMFLOAT4(.2f, 0.0f, 0.0f, 1.0f), XMFLOAT4(0.7f, 0.0f, 0.0f, 1.0f), 0, ball->GetPosition(), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0), 0);
 
 	ball->SetBallLight(lights[lights.size() - 1]);
