@@ -1,12 +1,13 @@
 #pragma once
 #include "GameEntity.h"
 #include "Lighting.h"
+#include "ParticleSystem.h"
 
 class Ball :
 	public GameEntity
 {
 public:
-	Ball(float r, Mesh* m, Material* ma);
+	Ball(float r, Mesh* m, Material* ma, ParticleSystem* particleSystem);
 	~Ball();
 
 	float GetRadius();
@@ -22,6 +23,7 @@ public:
 	void ResetPrevPos();
 	void ApplyVelocity(XMFLOAT3 v);
 	void RandomizeBallLight();
+	ParticleSystem* GetParticleSystem();
 	
 	void Update(float dt);
 
@@ -32,6 +34,8 @@ private:
 	XMFLOAT3 velocity;
 	XMFLOAT3 angularVelocity;
 	std::vector<XMFLOAT3> prevPosition;
+
+	ParticleSystem* particleSystem;
 
 	Lighting* ballLight;
 };
