@@ -214,6 +214,12 @@ void GameManager::CreateUIMaterial(SimpleVertexShader* vs, SimplePixelShader* ps
 }
 
 //Create material given shaders to use and texture/sampler
+void GameManager::CreateParticleMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new ParticleMaterial(vs, ps, rv, ss));
+}
+
+//Create material given shaders to use and texture/sampler
 void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
 {
 	materials.push_back(new Material(vs, ps, rv, ss));
@@ -344,8 +350,8 @@ void GameManager::InitGame(Camera* cam)
 	CreateBallMaterial(vertexShaders[1], pixelShaders[1], resourceViews[1],samplerStates[0]);
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
-	// particles
-	CreateMaterial(vertexShaders[3], pixelShaders[3], resourceViews[0], samplerStates[0]);
+	//particles
+	CreateParticleMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
 	//UI
 	CreateUIMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 

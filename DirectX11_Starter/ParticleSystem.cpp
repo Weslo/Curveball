@@ -279,7 +279,7 @@ void ParticleSystem::EmitParticles(float dt)
 	emitParticle = false;
 
 	// Check if there is time to emit a new particle.
-	if (accumulatedTime > 1000.0f / particlesPerSecond)
+	if (accumulatedTime > 1.0f / particlesPerSecond)
 	{
 		accumulatedTime = 0.0f;
 		emitParticle = true;
