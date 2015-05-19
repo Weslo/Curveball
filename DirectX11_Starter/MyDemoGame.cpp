@@ -221,7 +221,7 @@ void MyDemoGame::DrawScene()
 
 	// Draw the particle system.
 	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetBall()->GetWorldMatrix());
-	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix());
 	manager->GetParticleSystem()->Draw(deviceContext);
 	
 	// Present the buffer
