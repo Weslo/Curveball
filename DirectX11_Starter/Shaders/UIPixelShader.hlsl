@@ -13,7 +13,7 @@ SamplerState basicSampler : register(s0);
 // Entry point for this pixel shader
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	return(1.0f, 1.0f, 1.0f, 1.0f);
+	//return(float4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	input.normal = normalize(input.normal);
 

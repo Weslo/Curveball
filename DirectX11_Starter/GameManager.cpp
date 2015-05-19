@@ -208,12 +208,15 @@ void GameManager::CreatePlayerMaterial(SimpleVertexShader* vs, SimplePixelShader
 	materials.push_back(new PlayerMaterial(vs, ps, rv, ss));
 }
 
+void GameManager::CreateUIMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss)
+{
+	materials.push_back(new UIMaterial(vs, ps, rv, ss));
+}
+
 //Create material given shaders to use and texture/sampler
 void GameManager::CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss, const wchar_t* psn, const wchar_t* vsn)
 {
 	materials.push_back(new Material(vs, ps, rv, ss));
-	materials[materials.size() - 1]->GetPixelShader()->LoadShaderFile(psn);
-	materials[materials.size() - 1]->GetVertexShader()->LoadShaderFile(vsn);
 }
 
 // Craete particle system.
@@ -344,7 +347,7 @@ void GameManager::InitGame(Camera* cam)
 	// particles
 	CreateMaterial(vertexShaders[3], pixelShaders[3], resourceViews[0], samplerStates[0]);
 	//UI
-	CreateMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
+	CreateUIMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 
 	CreateMesh("../Assets/wall2.obj");
 	CreateMesh("../Assets/sphere.obj");
@@ -378,18 +381,29 @@ void GameManager::InitGame(Camera* cam)
 	//Order: level, 1, 2, 3, player, opponent
 	
 	//Level + level number. Limited to 1,2,3 right now because of time constraints
-	CreateUIElement(XMFLOAT3(-3.0f, 0.0f, -10.5f), meshes[3], materials[4]);
-	CreateUIElement(XMFLOAT3(-9.0f, 5.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(-1.2f, 1.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(-.7f, 1.0f, -10.5f), meshes[3], materials[4]);
 
 	ui[0]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
-	ui[0]->SetRotation(XMFLOAT3(0, 0, 0));
+	ui[0]->SetRotation(XMFLOAT3(0, XM_PI, 0));
+	ui[1]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[1]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	//Player + lives
 	CreateUIElement(XMFLOAT3(-10.0f, 4.0f, -10.5f), meshes[7], materials[4]);
 	CreateUIElement(XMFLOAT3(-9.0f, 4.0f, -10.5f), meshes[3], materials[4]);
 
+	ui[2]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[2]->SetRotation(XMFLOAT3(0, XM_PI, 0));
+	ui[3]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[3]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	//Computer + lives
 	CreateUIElement(XMFLOAT3(-.0f, 5.0f, -10.5f), meshes[8], materials[4]);
 	CreateUIElement(XMFLOAT3(-10.0f, 5.0f, -10.5f), meshes[3], materials[4]);
+
+	ui[4]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[4]->SetRotation(XMFLOAT3(0, XM_PI, 0));
+	ui[5]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[5]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 
 
 	CreateGameController(ball, player, computer, 3, 3, 1);

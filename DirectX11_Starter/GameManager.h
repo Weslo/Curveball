@@ -5,6 +5,7 @@
 #include "WallMaterial.h"
 #include "BallMaterial.h"
 #include "PlayerMaterial.h"
+#include "UIMaterial.h"
 #include "SimpleShader.h"
 #include "Camera.h"
 #include "GameEntity.h"

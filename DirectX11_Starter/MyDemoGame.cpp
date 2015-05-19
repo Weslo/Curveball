@@ -185,6 +185,15 @@ void MyDemoGame::DrawScene()
 	// Iterate by material
 	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
 	{
+		if (i == 4)
+		{
+			//Clear dpeth for the ui
+			deviceContext->ClearDepthStencilView(
+				depthStencilView,
+				D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+				1.0f,
+				0);
+		}
 		// Iterate by entity.
 		for (unsigned int j = 0; j < manager->GetDrawByShader()[i].size(); j++)
 		{
@@ -194,8 +203,8 @@ void MyDemoGame::DrawScene()
 			manager->GetDrawByShader()[i][j]->PrepareToDraw();
 			manager->GetMaterials()[i]->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 
-			//Hardcode the set shader for ui and particles
-			if (i >= 3)
+			//Hardcode the set shader for particles
+			if (i == 3)
 			{
 				manager->GetMaterials()[i]->GetVertexShader()->SetShader();
 				manager->GetMaterials()[i]->GetPixelShader()->SetShader();
