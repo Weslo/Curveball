@@ -82,7 +82,7 @@ bool MyDemoGame::Init()
 	manager = new GameManager(device, deviceContext);
 
 	//Create the camera in here. Pain in the ass to do in game manager
-	camera = new Camera(XMFLOAT3(0.0f, 0.0f, -13.0f));
+	camera = new Camera(XMFLOAT3(0.0f, 0.0f, -13.5f));
 	camera->RecalculateViewMatrix();
 	camera->RecalculateProjectionMatrix(AspectRatio());
 

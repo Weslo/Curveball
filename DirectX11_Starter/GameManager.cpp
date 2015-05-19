@@ -384,7 +384,7 @@ void GameManager::InitGame(Camera* cam)
 	CreateUIElement(XMFLOAT3(-.1f, 1.2f, -10.5f), meshes[3], materials[4]);
 	CreateUIElement(XMFLOAT3(.1f, 1.2f, -10.5f), meshes[3], materials[4]);
 
-	XMFLOAT3 uiScale = XMFLOAT3(5.0f, 5.0f, 5.0f);
+	XMFLOAT3 uiScale = XMFLOAT3(6.0f, 6.0f, 6.0f);
 
 	ui[0]->SetScale(uiScale);
 	ui[0]->SetRotation(XMFLOAT3(0, XM_PI, 0));
