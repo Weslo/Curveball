@@ -119,9 +119,9 @@ bool ParticleSystem::InitializeParticleSystem()
 	// Initialize all the different elements used for particle processing.
 
 	// Set position deviation.
-	particleDeviationX = 0.5f;
+	particleDeviationX = 0.1f;
 	particleDeviationY = 0.1f;
-	particleDeviationZ = 2.0f;
+	particleDeviationZ = 0.1f;
 	
 	// Set speed and speed deviation.
 	particleVelocity = 1000.0f;
@@ -131,7 +131,7 @@ bool ParticleSystem::InitializeParticleSystem()
 	particleSize = 0.05f;
 
 	// Set system emission rate.
-	particlesPerSecond = 250.0f;
+	particlesPerSecond = 100.0f;
 
 	// Set max living particles.
 	maxParticles = 5000;

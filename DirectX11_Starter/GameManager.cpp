@@ -51,6 +51,8 @@ GameManager::~GameManager()
 		ReleaseMacro(samplerStates[i]);
 	}
 
+	ReleaseMacro(blendState);
+
 	delete gameController;
 }
 
@@ -305,6 +307,8 @@ void GameManager::AddDraw(std::vector<GameEntity*> draw)
 
 void GameManager::InitGame(Camera* cam)
 {
+	ConfigureBlendState();
+
 	CreatePixelShader();
 	CreateVertexShader();
 	pixelShaders[0]->LoadShaderFile(L"WallPixelShader.cso");
@@ -467,4 +471,31 @@ void GameManager::InitGame(Camera* cam)
 
 	static_cast<BallMaterial*>(materials[1])->SetCamPos(camPos);
 	static_cast<BallMaterial*>(materials[1])->SetLArray(lArray);
+}
+
+void GameManager::ConfigureBlendState()
+{
+	blendState = NULL;
+
+	D3D11_BLEND_DESC blendStateDesc;
+	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
+
+	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+	ZeroMemory(&rtbd, sizeof(D3D11_RENDER_TARGET_BLEND_DESC));
+
+	rtbd.BlendEnable = true;
+	rtbd.SrcBlend = D3D11_BLEND_SRC_COLOR;
+	rtbd.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+	rtbd.BlendOp = D3D11_BLEND_OP_ADD;
+	rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;
+	rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;
+	rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	rtbd.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+	blendStateDesc.RenderTarget[0] = rtbd;
+	device->CreateBlendState(&blendStateDesc, &blendState);
+
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+	//deviceContext->OMSetBlendState(blendState, blendFactor, sampleMask);
 }

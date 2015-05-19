@@ -28,6 +28,8 @@ public:
 
 	void InitGame(Camera* cam);
 
+	void ConfigureBlendState();
+
 	//Methods to create Mesh, Ball, Player, Material, Walls
 	//To create additional crap, add more methods here
 	void CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma);
@@ -84,6 +86,8 @@ private:
 
 	//GameController manages game logic, needs ref to ball, player, and ai player.
 	GameController* gameController;
+
+	ID3D11BlendState* blendState;
 
 	Player* player;
 	Computer* computer;
