@@ -38,6 +38,8 @@ public:
 	Material* GetMaterial();
 	int GetIndexCount();
 
+	XMFLOAT4X4 GetWorldMatrix();
+
 private:
 
 	bool InitializeParticleSystem();
@@ -78,5 +80,9 @@ private:
 	VertexType* vertices;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
+
+	// This should only be calculated once and should just be a world matrix
+	// that describes the origin transformation.
+	XMFLOAT4X4 worldMatrix;
 };
 

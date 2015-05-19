@@ -41,6 +41,21 @@ bool ParticleSystem::Initialize(ID3D11Device* device, Material* _material)
 		return false;
 	}
 
+	// Initialize the world matrix.
+
+	// Translation
+	XMMATRIX translationMatrix = XMMatrixTranslation(0, 0, 0);
+
+	// Rotation
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(0, 0, 0);
+
+	// Scale
+	XMMATRIX scaleMatrix = XMMatrixScaling(1,1,1);
+
+	// Transformation
+	XMMATRIX transformationMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(transformationMatrix));
+
 	// Successful initialization!
 	return true;
 }
@@ -97,6 +112,11 @@ Material* ParticleSystem::GetMaterial()
 int ParticleSystem::GetIndexCount()
 {
 	return indexCount;
+}
+
+XMFLOAT4X4 ParticleSystem::GetWorldMatrix()
+{
+	return worldMatrix;
 }
 
 // Initialize all the properties of the particle system to prepare it for updating.

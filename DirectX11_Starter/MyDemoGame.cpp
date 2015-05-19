@@ -223,7 +223,7 @@ void MyDemoGame::DrawScene()
 	}
 
 	// Draw the particle system.
-	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetBall()->GetWorldMatrix());
+	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetParticleSystem()->GetWorldMatrix());
 	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 	manager->GetParticleSystem()->Draw(deviceContext);
 	
