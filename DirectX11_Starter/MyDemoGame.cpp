@@ -159,6 +159,7 @@ void MyDemoGame::UpdateScene(float dt)
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetCamPos(camPos);
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetLArray(lArray);
 
+	manager->GetParticleSystem()->SetEmitterPosition(manager->GetBall()->GetPosition());
 	manager->GetParticleSystem()->Update(deviceContext, dt);
 
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { DestroyWindow(hMainWnd); }	// Exit the game

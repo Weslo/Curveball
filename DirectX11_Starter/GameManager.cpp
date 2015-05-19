@@ -333,6 +333,7 @@ void GameManager::InitGame(Camera* cam)
 	CreateResourceView(L"../Assets/ballTex.png");
 	CreateResourceView(L"../Assets/paddle.png");
 	CreateResourceView(L"../Assets/uiAssets/ui.png");
+	CreateResourceView(L"../Assets/particle.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
@@ -348,7 +349,7 @@ void GameManager::InitGame(Camera* cam)
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
 	//particles
-	CreateParticleMaterial(vertexShaders[3], pixelShaders[3], resourceViews[1], samplerStates[0]);
+	CreateParticleMaterial(vertexShaders[3], pixelShaders[3], resourceViews[4], samplerStates[0]);
 	//UI
 	CreateUIMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 

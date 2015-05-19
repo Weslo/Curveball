@@ -39,6 +39,7 @@ public:
 	int GetIndexCount();
 
 	XMFLOAT4X4 GetWorldMatrix();
+	void SetEmitterPosition(XMFLOAT3 pos);
 
 private:
 
@@ -84,5 +85,6 @@ private:
 	// This should only be calculated once and should just be a world matrix
 	// that describes the origin transformation.
 	XMFLOAT4X4 worldMatrix;
+	XMFLOAT3 emitterPosition;
 };
 

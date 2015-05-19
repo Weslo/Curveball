@@ -41,21 +41,6 @@ bool ParticleSystem::Initialize(ID3D11Device* device, Material* _material)
 		return false;
 	}
 
-	// Initialize the world matrix.
-
-	// Translation
-	XMMATRIX translationMatrix = XMMatrixTranslation(0, 0, 0);
-
-	// Rotation
-	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(0, 0, 0);
-
-	// Scale
-	XMMATRIX scaleMatrix = XMMatrixScaling(1,1,1);
-
-	// Transformation
-	XMMATRIX transformationMatrix = scaleMatrix * rotationMatrix * translationMatrix;
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(transformationMatrix));
-
 	// Successful initialization!
 	return true;
 }
@@ -114,9 +99,16 @@ int ParticleSystem::GetIndexCount()
 	return indexCount;
 }
 
+// Returns the world matrix used to draw this particle system.
 XMFLOAT4X4 ParticleSystem::GetWorldMatrix()
 {
 	return worldMatrix;
+}
+
+// Sets the position of the particle emitter.
+void ParticleSystem::SetEmitterPosition(XMFLOAT3 pos)
+{
+	emitterPosition = pos;
 }
 
 // Initialize all the properties of the particle system to prepare it for updating.
@@ -160,6 +152,17 @@ bool ParticleSystem::InitializeParticleSystem()
 	// Reset system counters.
 	currentParticleCount = 0;
 	accumulatedTime = 0;
+
+
+	// Initialize the world matrix.
+	XMMATRIX translationMatrix = XMMatrixTranslation(0, 0, 0);
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(0, 0, 0);
+	XMMATRIX scaleMatrix = XMMatrixScaling(1, 1, 1);
+	XMMATRIX transformationMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(transformationMatrix));
+
+	// Initialize the particle emitter.
+	emitterPosition = XMFLOAT3(0, 0, 0);
 
 	// Successfully initialized particle system!
 	return true;
@@ -319,6 +322,11 @@ void ParticleSystem::EmitParticles(float dt)
 		_r = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
 		_g = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
 		_b = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
+
+		// Position the new particle relative to the emitter.
+		_x += emitterPosition.x;
+		_y += emitterPosition.y;
+		_z += emitterPosition.z;
 
 		// Sort the new particle by depth.
 		index = 0;
