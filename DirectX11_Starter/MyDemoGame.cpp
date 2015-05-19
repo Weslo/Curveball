@@ -190,6 +190,7 @@ void MyDemoGame::DrawScene()
 	// Iterate by material
 	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
 	{
+		/*
 		if (i == 4)
 		{
 			//Clear dpeth for the ui
@@ -199,6 +200,7 @@ void MyDemoGame::DrawScene()
 				1.0f,
 				0);
 		}
+		*/
 		// Iterate by entity.
 		for (unsigned int j = 0; j < manager->GetDrawByShader()[i].size(); j++)
 		{
