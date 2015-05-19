@@ -159,9 +159,9 @@ void MyDemoGame::UpdateScene(float dt)
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetCamPos(camPos);
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetLArray(lArray);
 
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { DestroyWindow(hMainWnd); }	// Exit the game
-	
 	manager->GetParticleSystem()->Update(deviceContext, dt);
+
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { DestroyWindow(hMainWnd); }	// Exit the game
 }
 
 // Clear the screen, redraw everything, present
@@ -207,12 +207,15 @@ void MyDemoGame::DrawScene()
 			manager->GetDrawByShader()[i][j]->PrepareToDraw();
 			manager->GetMaterials()[i]->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 
+			/*
 			//Hardcode the set shader for particles
 			if (i == 3)
 			{
 				manager->GetMaterials()[i]->GetVertexShader()->SetShader();
 				manager->GetMaterials()[i]->GetPixelShader()->SetShader();
 			}
+
+			*/
 
 			// Draw the mesh
 			manager->GetDrawByShader()[i][j]->Draw(deviceContext);
@@ -221,7 +224,7 @@ void MyDemoGame::DrawScene()
 
 	// Draw the particle system.
 	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetBall()->GetWorldMatrix());
-	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix());
+	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 	manager->GetParticleSystem()->Draw(deviceContext);
 	
 	// Present the buffer
