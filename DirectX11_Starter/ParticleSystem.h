@@ -86,7 +86,7 @@ private:
 	// This should only be calculated once and should just be a world matrix
 	// that describes the origin transformation.
 	XMFLOAT4X4 worldMatrix;
-	bool emitterEnabled = false;
+	bool emitterEnabled;
 	XMFLOAT3 emitterPosition;
 };
 

@@ -168,6 +168,7 @@ bool ParticleSystem::InitializeParticleSystem()
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(transformationMatrix));
 
 	// Initialize the particle emitter.
+	emitterEnabled = false;
 	emitterPosition = XMFLOAT3(0, 0, 0);
 
 	// Successfully initialized particle system!

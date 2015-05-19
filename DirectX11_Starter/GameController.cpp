@@ -106,6 +106,7 @@ void GameController::ResetCourt()
 
 	ball->SetVelocity(XMFLOAT3(0, 0, 0));
 	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));
+	ball->GetParticleSystem()->SetEmitterEnabled(false);
 
 	ChangeGameState(SERVE);
 
@@ -130,6 +131,7 @@ void GameController::ResetGame()
 
 	ball->SetVelocity(XMFLOAT3(0, 0, 0));
 	ball->SetAngularVelocity(XMFLOAT3(0, 0, 0));
+	ball->GetParticleSystem()->SetEmitterEnabled(false);
 
 	ChangeGameState(SERVE);
 
@@ -143,6 +145,7 @@ void GameController::Serve()
 	if (gameState == SERVE)
 	{
 		ball->ApplyVelocity(XMFLOAT3(0, 0, 8));
+		ball->GetParticleSystem()->SetEmitterEnabled(true);
 		ChangeGameState(PLAY);
 	}	
 }

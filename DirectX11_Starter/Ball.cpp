@@ -1,10 +1,11 @@
 #include "Ball.h"
 
-Ball::Ball(float r, Mesh* m, Material* ma) : GameEntity(m, ma)
+Ball::Ball(float r, Mesh* m, Material* ma, ParticleSystem* _particleSystem) : GameEntity(m, ma)
 {
 	radius = r;
 	velocity = XMFLOAT3(0, 0, 0);
 	angularVelocity = XMFLOAT3(0, 0, 0);
+	particleSystem = _particleSystem;
 }
 
 
@@ -75,6 +76,11 @@ void Ball::ResetPrevPos()
 void Ball::RandomizeBallLight()
 {
 	ballLight->SetDiffuse(XMFLOAT4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), 1.0f));
+}
+
+ParticleSystem* Ball::GetParticleSystem()
+{
+	return particleSystem;
 }
 
 void Ball::Update(float dt)

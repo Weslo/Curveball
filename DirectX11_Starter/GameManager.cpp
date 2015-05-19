@@ -244,7 +244,7 @@ void GameManager::CreateMesh(char* file)
 //Create ball given radius, mesh, and material
 void GameManager::CreateBall(float r, Mesh* m, Material* ma)
 {
-	ball = new Ball(r, m, ma);
+	ball = new Ball(r, m, ma, particleSystem);
 	entities.push_back(ball);
 }
 
@@ -370,6 +370,8 @@ void GameManager::InitGame(Camera* cam)
 
 	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
 
+	CreateParticleSystem(materials[3]);
+
 	CreateWall(16, 4, XMFLOAT3(0, -2.0f, 0), XMFLOAT3(0, 0, 0), wScale, XMFLOAT3(0, 1.0f, 0), meshes[0], materials[0]); //Bottom wall
 	CreateWall(16, 4, XMFLOAT3(-2.0f, 0, 0), XMFLOAT3(0, 0, -XM_PI / 2), wScale, XMFLOAT3(1.0f, 0, 0), meshes[0], materials[0]); //Left Wall
 	CreateWall(16, 4, XMFLOAT3(0, 2.0f, 0), XMFLOAT3(0, 0, XM_PI), wScale, XMFLOAT3(0, -1.0f, 0), meshes[0], materials[0]); //Top wall
@@ -380,8 +382,6 @@ void GameManager::InitGame(Camera* cam)
 
 	CreatePlayer(XMFLOAT3(0, 0, -8), 1.33f, 1, meshes[2], materials[2]);
 	player->SetRotation(0, XM_PI / 2, 0);
-
-	CreateParticleSystem(materials[3]);
 
 	CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, meshes[2], materials[2]);
 	computer->SetRotation(0, XM_PI / 2, 0);
