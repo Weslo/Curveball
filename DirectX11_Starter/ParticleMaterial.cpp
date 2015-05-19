@@ -10,9 +10,9 @@ ParticleMaterial::~ParticleMaterial()
 {
 }
 
-void ParticleMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
+void ParticleMaterial::PrepareToDraw(DirectX::XMFLOAT4X4 view, DirectX::XMFLOAT4X4 proj)
 {
-	Material::PrepareToDraw(world, view);
+	Material::PrepareToDraw(view, proj);
 
 	vertexShader->SetShader();
 
