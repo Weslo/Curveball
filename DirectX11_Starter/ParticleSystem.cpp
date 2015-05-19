@@ -124,11 +124,11 @@ bool ParticleSystem::InitializeParticleSystem()
 	particleDeviationZ = 2.0f;
 	
 	// Set speed and speed deviation.
-	particleVelocity = 1.0f;
+	particleVelocity = 1000.0f;
 	particleVelocityVariation = 0.2f;
 
 	// Set the size of the particles.
-	particleSize = 0.2f;
+	particleSize = 0.05f;
 
 	// Set system emission rate.
 	particlesPerSecond = 250.0f;

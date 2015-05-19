@@ -208,16 +208,6 @@ void MyDemoGame::DrawScene()
 			manager->GetDrawByShader()[i][j]->PrepareToDraw();
 			manager->GetMaterials()[i]->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 
-			/*
-			//Hardcode the set shader for particles
-			if (i == 3)
-			{
-				manager->GetMaterials()[i]->GetVertexShader()->SetShader();
-				manager->GetMaterials()[i]->GetPixelShader()->SetShader();
-			}
-
-			*/
-
 			// Draw the mesh
 			manager->GetDrawByShader()[i][j]->Draw(deviceContext);
 		}

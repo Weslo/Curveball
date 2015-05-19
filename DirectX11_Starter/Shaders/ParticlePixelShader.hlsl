@@ -16,7 +16,6 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor = particleTexture.Sample(samplerState, input.tex);
 
 	finalColor = textureColor * input.color;
-	finalColor.a = textureColor.a;
 
 	return finalColor;
 }
