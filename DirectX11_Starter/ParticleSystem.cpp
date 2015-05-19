@@ -134,7 +134,7 @@ bool ParticleSystem::InitializeParticleSystem()
 	particleVelocityVariation = 0.2f;
 
 	// Set the size of the particles.
-	particleSize = 0.05f;
+	particleSize = 0.015f;
 
 	// Set system emission rate.
 	particlesPerSecond = 100.0f;
@@ -407,7 +407,7 @@ void ParticleSystem::KillParticles()
 	// Kill particles that have moved past the height of -3.0f.
 	for (i = 0; i < maxParticles; i++)
 	{
-		if ((particles[i].active == true) && (particles[i].y < -3.0f))
+		if ((particles[i].active == true) && (particles[i].y < -1.5f))
 		{
 			particles[i].active = false;
 			currentParticleCount--;

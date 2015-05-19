@@ -55,7 +55,7 @@ float4 DoSpecular(Light light, float3 V, float3 L, float3 N)
 	float3 H = normalize(L + V);
 	float NdotH = max(0, dot(N, H));
 
-	return light.diffuse * pow(RdotV, 8);
+	return light.diffuse * pow(RdotV, 4);
 }
 
 //d is the distance from point to light source

@@ -159,6 +159,9 @@ void MyDemoGame::UpdateScene(float dt)
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetCamPos(camPos);
 	static_cast<BallMaterial*>(manager->GetMaterials()[1])->SetLArray(lArray);
 
+	static_cast<ParticleMaterial*>(manager->GetMaterials()[3])->SetLArray(lArray);
+	static_cast<ParticleMaterial*>(manager->GetMaterials()[3])->SetCamPos(camPos);
+
 	manager->GetParticleSystem()->SetEmitterPosition(manager->GetBall()->GetPosition());
 	manager->GetParticleSystem()->Update(deviceContext, dt);
 
@@ -169,7 +172,7 @@ void MyDemoGame::UpdateScene(float dt)
 void MyDemoGame::DrawScene()
 {
 	// Background color (Cornflower Blue in this case) for clearing
-	const float color[4] = {0.9f, 0.9f, 0.9f, 0.0f};
+	const float color[4] = {0.1f, 0.1f, 0.1f, 0.0f};
 
 	// Clear the buffer (erases what's on the screen)
 	//  - Do this once per frame
@@ -190,17 +193,6 @@ void MyDemoGame::DrawScene()
 	// Iterate by material
 	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
 	{
-		/*
-		if (i == 4)
-		{
-			//Clear dpeth for the ui
-			deviceContext->ClearDepthStencilView(
-				depthStencilView,
-				D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-				1.0f,
-				0);
-		}
-		*/
 		// Iterate by entity.
 		for (unsigned int j = 0; j < manager->GetDrawByShader()[i].size(); j++)
 		{
