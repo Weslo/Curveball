@@ -306,19 +306,16 @@ void GameManager::InitGame(Camera* cam)
 {
 	CreatePixelShader();
 	CreateVertexShader();
-
 	pixelShaders[0]->LoadShaderFile(L"WallPixelShader.cso");
 	vertexShaders[0]->LoadShaderFile(L"WallVertexShader.cso");
 
 	CreatePixelShader();
 	CreateVertexShader();
-
 	pixelShaders[1]->LoadShaderFile(L"BallPixelShader.cso");
 	vertexShaders[1]->LoadShaderFile(L"BallVertexShader.cso");
 
 	CreatePixelShader();
 	CreateVertexShader();
-
 	pixelShaders[2]->LoadShaderFile(L"PlayerPixelShader.cso");
 	vertexShaders[2]->LoadShaderFile(L"PlayerVertexShader.cso");
 
@@ -351,7 +348,7 @@ void GameManager::InitGame(Camera* cam)
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
 	//particles
-	CreateParticleMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
+	CreateParticleMaterial(vertexShaders[3], pixelShaders[3], resourceViews[1], samplerStates[0]);
 	//UI
 	CreateUIMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 
@@ -412,7 +409,6 @@ void GameManager::InitGame(Camera* cam)
 	ui[4]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	ui[5]->SetScale(uiScale);
 	ui[5]->SetRotation(XMFLOAT3(0, XM_PI, 0));
-
 
 	CreateGameController(ball, player, computer, 3, 3, 1);
 
