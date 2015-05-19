@@ -112,5 +112,22 @@ private:
 
 	//All entities to be cleaned up
 	std::vector<GameEntity*> entities;
+
+	// Render target stuff
+	ID3D11Texture2D* renderTexture;
+	ID3D11RenderTargetView* rtView;
+	ID3D11ShaderResourceView* rtSRV;
+
+	// Full screen quad
+	Mesh* fullscreenQuad;
+	SimpleVertexShader* quadVS;
+	SimplePixelShader* quadPS;
+
+	// Refractive "stuff"
+	GameEntity* refractEntity;
+	Material* refractMaterial;
+	SimpleVertexShader* refractVS;
+	SimplePixelShader* refractPS;
+	ID3D11ShaderResourceView* normalSRV;
 };
 

@@ -52,6 +52,21 @@ GameManager::~GameManager()
 	}
 
 	delete gameController;
+
+
+	renderTexture->Release();
+	rtSRV->Release();
+	rtView->Release();
+
+	delete quadPS;
+	delete quadVS;
+	delete fullscreenQuad;
+
+	delete refractEntity;
+	delete refractMaterial;
+	delete refractPS;
+	delete refractVS;
+	normalSRV->Release();
 }
 
 #pragma region Getters
@@ -306,16 +321,19 @@ void GameManager::InitGame(Camera* cam)
 {
 	CreatePixelShader();
 	CreateVertexShader();
+
 	pixelShaders[0]->LoadShaderFile(L"WallPixelShader.cso");
 	vertexShaders[0]->LoadShaderFile(L"WallVertexShader.cso");
 
 	CreatePixelShader();
 	CreateVertexShader();
+
 	pixelShaders[1]->LoadShaderFile(L"BallPixelShader.cso");
 	vertexShaders[1]->LoadShaderFile(L"BallVertexShader.cso");
 
 	CreatePixelShader();
 	CreateVertexShader();
+
 	pixelShaders[2]->LoadShaderFile(L"PlayerPixelShader.cso");
 	vertexShaders[2]->LoadShaderFile(L"PlayerVertexShader.cso");
 
@@ -348,7 +366,7 @@ void GameManager::InitGame(Camera* cam)
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
 	//particles
-	CreateParticleMaterial(vertexShaders[3], pixelShaders[3], resourceViews[1], samplerStates[0]);
+	CreateParticleMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
 	//UI
 	CreateUIMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 
@@ -380,6 +398,91 @@ void GameManager::InitGame(Camera* cam)
 	CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, meshes[2], materials[2]);
 	computer->SetRotation(0, XM_PI / 2, 0);
 
+	//
+	// SETUP
+	//
+
+	quadVS = new SimpleVertexShader(device, deviceContext);
+	quadVS->LoadShaderFile(L"QuadVS.cso");
+
+	quadPS = new SimplePixelShader(device, deviceContext);
+	quadPS->LoadShaderFile(L"QuadPS.cso");
+
+	// Load texture
+	DirectX::CreateWICTextureFromFile(device, deviceContext, L"../Assets/waterNormal.jpg", 0, &normalSRV);
+
+	// Set up sampler
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	//samplerDesc.MaxAnisotropy = 1;
+
+	device->CreateSamplerState(&samplerDesc, &sampler);
+
+	// Set up the render texture
+	D3D11_TEXTURE2D_DESC rtDesc;
+	rtDesc.Width = windowWidth;
+	rtDesc.Height = windowHeight;
+	rtDesc.ArraySize = 1;
+	rtDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	rtDesc.CPUAccessFlags = 0;
+	rtDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtDesc.MipLevels = 1;
+	rtDesc.MiscFlags = 0;
+	rtDesc.SampleDesc.Count = 1;
+	rtDesc.SampleDesc.Quality = 0;
+	rtDesc.Usage = D3D11_USAGE_DEFAULT;
+	device->CreateTexture2D(&rtDesc, 0, &renderTexture);
+
+	// Set up the render target view
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	ZeroMemory(&rtvDesc, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
+	rtvDesc.Format = rtDesc.Format;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Texture2D.MipSlice = 0;
+	device->CreateRenderTargetView(renderTexture, &rtvDesc, &rtView);
+
+	// Set up a shader resource view
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	srvDesc.Format = rtDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	device->CreateShaderResourceView(renderTexture, &srvDesc, &rtSRV);
+
+	Vertex quad[4];
+	quad[0].Position = XMFLOAT3(-1, +1, 0);
+	quad[1].Position = XMFLOAT3(-1, -1, 0);
+	quad[2].Position = XMFLOAT3(+1, -1, 0);
+	quad[3].Position = XMFLOAT3(+1, +1, 0);
+	quad[0].UV = XMFLOAT2(0, 0);
+	quad[1].UV = XMFLOAT2(0, 1);
+	quad[2].UV = XMFLOAT2(1, 1);
+	quad[3].UV = XMFLOAT2(1, 0);
+
+	unsigned int indices[6];
+	indices[0] = 0;
+	indices[1] = 2;
+	indices[2] = 1;
+	indices[3] = 0;
+	indices[4] = 3;
+	indices[5] = 2;
+
+	fullscreenQuad = new Mesh(quad, 4, indices, 6, device);
+
+	// Set up the refraction object
+	refractMaterial = new Material(refractVS, refractPS, rtSRV, sampler);
+	refractEntity = new GameEntity(meshes[2], refractMaterial);
+	refractEntity->SetPosition(0, 0, -2);
+	refractEntity->SetScale(1.5f, 1.5f, 1.5f);
+
+
+
 	//Create ui
 	//Order: level, 1, 2, 3, player, opponent
 	
@@ -409,6 +512,7 @@ void GameManager::InitGame(Camera* cam)
 	ui[4]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	ui[5]->SetScale(uiScale);
 	ui[5]->SetRotation(XMFLOAT3(0, XM_PI, 0));
+
 
 	CreateGameController(ball, player, computer, 3, 3, 1);
 

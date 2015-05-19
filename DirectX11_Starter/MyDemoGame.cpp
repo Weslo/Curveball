@@ -170,6 +170,15 @@ void MyDemoGame::DrawScene()
 	// Background color (Cornflower Blue in this case) for clearing
 	const float color[4] = {0.9f, 0.9f, 0.9f, 0.0f};
 
+	// Set up the input assembler
+	//  - These technically don't need to be set every frame, unless you're changing the
+	//    input layout (different kinds of vertices) or the topology (different primitives)
+	//    between draws
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Set my RTV (so I'm rendering to a texture in memory instead)
+	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
 	// Clear the buffer (erases what's on the screen)
 	//  - Do this once per frame
 	//  - At the beginning (before drawing anything)
@@ -179,12 +188,6 @@ void MyDemoGame::DrawScene()
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
-
-	// Set up the input assembler
-	//  - These technically don't need to be set every frame, unless you're changing the
-	//    input layout (different kinds of vertices) or the topology (different primitives)
-	//    between draws
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Iterate by material
 	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
@@ -224,6 +227,76 @@ void MyDemoGame::DrawScene()
 	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(manager->GetGameEntities()[0]->GetWorldMatrix(), camera->GetViewMatrix());
 	manager->GetParticleSystem()->Draw(deviceContext);
 	
+	//
+	// DRAW
+	//
+
+	// Send basic data to vertex shader
+	vertexShader->SetMatrix4x4("view", viewMatrix);
+	vertexShader->SetMatrix4x4("projection", projectionMatrix);
+
+	// Send basic data to pixel shader
+	pixelShader->SetFloat4("ambientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1));
+	pixelShader->SetFloat4("lightColor", XMFLOAT4(1, 1, 1, 1));
+	pixelShader->SetFloat3("lightDir", XMFLOAT3(-1, -1, 0));
+	pixelShader->SetFloat3("lightPos", XMFLOAT3(0, 3, 0));
+	pixelShader->SetFloat3("camPos", XMFLOAT3(0, 0, -5));
+
+	// Draw entities
+	for (unsigned int i = 0; i < entities.size(); i++)
+	{
+		// Draw entities
+		entities[i].Draw(deviceContext);
+	}
+
+	// Go back to the regular "back buffer"
+	deviceContext->OMSetRenderTargets(1, &renderTargetView, 0);
+	deviceContext->ClearRenderTargetView(renderTargetView, color);
+
+
+	// Putting the render texture onto the screen
+	quadVS->SetShader();
+	quadPS->SetSamplerState("basicSampler", sampler);
+	quadPS->SetShaderResourceView("diffuseTexture", rtSRV);
+	quadPS->SetInt("blurAmount", 0);
+	quadPS->SetFloat2("pixelSize", XMFLOAT2(1.0f / windowWidth, 1.0f / windowHeight));
+	quadPS->SetShader();
+
+	// Set data
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	ID3D11Buffer* vb = fullscreenQuad->GetVertexBuffer();
+	deviceContext->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+	deviceContext->IASetIndexBuffer(fullscreenQuad->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+
+	// Draw
+	deviceContext->DrawIndexed(fullscreenQuad->GetIndexCount(), 0, 0);
+
+	// Stick with the back buffer, but re-enable the depth buffer from earlier
+	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+	// Send basic data to vertex shader
+	refractVS->SetMatrix4x4("view", viewMatrix);
+	refractVS->SetMatrix4x4("projection", projectionMatrix);
+	refractVS->SetFloat3("camPos", XMFLOAT3(0, 0, -5));
+
+	// Send basic data to pixel shader
+	refractPS->SetFloat4("ambientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1));
+	refractPS->SetFloat4("lightColor", XMFLOAT4(1, 1, 1, 1));
+	refractPS->SetFloat3("lightDir", XMFLOAT3(-1, -1, 0));
+	refractPS->SetFloat3("lightPos", XMFLOAT3(0, 3, 0));
+	refractPS->SetFloat3("camPos", XMFLOAT3(0, 0, -5));
+	refractPS->SetShaderResourceView("normalTexture", normalSRV);
+
+	refractEntity->Draw(deviceContext);
+
+
+	// Unset the shader resource
+	ID3D11ShaderResourceView* unset[1] = { 0 };
+	deviceContext->PSSetShaderResources(0, 1, unset);
+
+
 	// Present the buffer
 	//  - Puts the stuff on the screen
 	//  - Do this EXACTLY once per frame

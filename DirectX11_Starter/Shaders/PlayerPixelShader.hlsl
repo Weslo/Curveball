@@ -4,6 +4,7 @@
 #define SPOT_LIGHT 2
 
 Texture2D diffuseTexture : register(t0);
+Texture2D normalTexture : register(t1);
 SamplerState basicSampler : register(s0);
 
 // Defines the input to this pixel shader
@@ -14,6 +15,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float2 uv			: TEXCOORD;
 	float4 world		: TEXCOORD1;
+	float2 screenUV		: TEXCOORD2;
 };
 
 struct Light
@@ -142,8 +144,27 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	totalDiffuse = saturate(totalDiffuse);
 
+	//
+	// REFRACTION
+	//
+
+	float3 normalMap = normalTexture.Sample(basicSampler, input.uv).xyz * 2 - 1;
+	float3 adjustedNormal = normalize(input.normal + normalMap * 0.1f);
+
+
+	// Dir light spec
+	float3 toCamera = normalize(cameraPosition - input.world);
+	float3 refl = reflect(normalize(direction), adjustedNormal);
+	specular = pow(max(dot(refl, toCamera), 0), 8);
+
+
+	// Refract and alter the final uv for refraction
+	float3 refraction = refract(-toCamera, adjustedNormal, 0.9f);
+	input.screenUV.x += refraction.x * 0.5f;
+	input.screenUV.y += refraction.y * 0.5f;
+
 	// Texture
-	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.uv);
+	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.screenUV);
 
 	return surfaceColor * totalDiffuse;
 }

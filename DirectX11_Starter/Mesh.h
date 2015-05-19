@@ -14,6 +14,7 @@ class Mesh
 {
 public:
 	// Constructors/Destructors
+	Mesh(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, ID3D11Device* device);
 	Mesh(char* file, ID3D11Device* device);
 	~Mesh();
 
