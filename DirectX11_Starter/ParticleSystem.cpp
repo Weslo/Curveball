@@ -64,7 +64,7 @@ bool ParticleSystem::Update(ID3D11DeviceContext* deviceContext, float dt)
 	KillParticles();
 
 	// Emit new particles.
-	EmitParticles(dt);
+	if (emitterEnabled) { EmitParticles(dt); }
 
 	// Update the position of live particles.
 	UpdateParticles(dt);
@@ -103,6 +103,12 @@ int ParticleSystem::GetIndexCount()
 XMFLOAT4X4 ParticleSystem::GetWorldMatrix()
 {
 	return worldMatrix;
+}
+
+// Sets whether or not the particle emitter is enabled.
+void ParticleSystem::SetEmitterEnabled(bool _enabled)
+{
+	emitterEnabled = _enabled;
 }
 
 // Sets the position of the particle emitter.
