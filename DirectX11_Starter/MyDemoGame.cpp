@@ -190,6 +190,14 @@ void MyDemoGame::DrawScene()
 	//    between draws
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+
+	float blendFactor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
+	//Set the default blend state (no blending) for opaque objects
+	deviceContext->OMSetBlendState(0, 0, 0xffffffff);
+
+	//Render opaque objects//
+
 	// Iterate by material
 	for (unsigned int i = 0; i < manager->GetDrawByShader().size(); i++)
 	{
@@ -207,11 +215,13 @@ void MyDemoGame::DrawScene()
 		}
 	}
 
+	//Set the blend state for transparent objects
+	deviceContext->OMSetBlendState(manager->Transparency, blendFactor, 0xffffffff);
+	deviceContext->RSSetState(manager->CWcullMode);
 	// Draw the particle system.
 	manager->GetParticleSystem()->GetMaterial()->GetVertexShader()->SetMatrix4x4("world", manager->GetParticleSystem()->GetWorldMatrix());
 	manager->GetParticleSystem()->GetMaterial()->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 	manager->GetParticleSystem()->Draw(deviceContext);
-	
 	// Present the buffer
 	//  - Puts the stuff on the screen
 	//  - Do this EXACTLY once per frame

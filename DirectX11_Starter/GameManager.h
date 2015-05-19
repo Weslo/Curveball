@@ -29,6 +29,7 @@ public:
 	void InitGame(Camera* cam);
 
 	void ConfigureBlendState();
+	void ConfigureAlphaBlend();
 
 	//Methods to create Mesh, Ball, Player, Material, Walls
 	//To create additional crap, add more methods here
@@ -77,6 +78,11 @@ public:
 	GameController* GetGameController();
 	std::vector<std::vector<GameEntity*>> GetDrawByShader();
 	std::vector<Lighting*> GetLights();
+	ID3D11BlendState* GetTransparency();
+
+	ID3D11BlendState* Transparency;
+	ID3D11RasterizerState* CCWcullMode;
+	ID3D11RasterizerState* CWcullMode;
 
 private:
 

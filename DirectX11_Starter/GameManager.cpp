@@ -54,6 +54,10 @@ GameManager::~GameManager()
 	ReleaseMacro(blendState);
 
 	delete gameController;
+
+	Transparency->Release();
+	CWcullMode->Release();
+	CCWcullMode->Release();
 }
 
 #pragma region Getters
@@ -140,6 +144,11 @@ std::vector<std::vector<GameEntity*>> GameManager::GetDrawByShader()
 std::vector<Lighting*> GameManager::GetLights()
 {
 	return lights;
+}
+
+ID3D11BlendState* GameManager::GetTransparency()
+{
+	return Transparency;
 }
 #pragma endregion
 
@@ -308,6 +317,7 @@ void GameManager::AddDraw(std::vector<GameEntity*> draw)
 void GameManager::InitGame(Camera* cam)
 {
 	ConfigureBlendState();
+	ConfigureAlphaBlend();
 
 	CreatePixelShader();
 	CreateVertexShader();
@@ -475,13 +485,11 @@ void GameManager::InitGame(Camera* cam)
 
 void GameManager::ConfigureBlendState()
 {
-	blendState = NULL;
-
-	D3D11_BLEND_DESC blendStateDesc;
-	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
 
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
-	ZeroMemory(&rtbd, sizeof(D3D11_RENDER_TARGET_BLEND_DESC));
+	ZeroMemory(&rtbd, sizeof(rtbd));
 
 	rtbd.BlendEnable = true;
 	rtbd.SrcBlend = D3D11_BLEND_SRC_COLOR;
@@ -492,10 +500,39 @@ void GameManager::ConfigureBlendState()
 	rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	rtbd.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
 
-	blendStateDesc.RenderTarget[0] = rtbd;
-	device->CreateBlendState(&blendStateDesc, &blendState);
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.RenderTarget[0] = rtbd;
 
-	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	UINT sampleMask = 0xffffffff;
-	//deviceContext->OMSetBlendState(blendState, blendFactor, sampleMask);
+	device->CreateBlendState(&blendDesc, &Transparency);
+}
+
+void GameManager::ConfigureAlphaBlend()
+{
+	D3D11_BLEND_DESC omDesc;
+	ZeroMemory(&omDesc,	sizeof(D3D11_BLEND_DESC));
+	omDesc.RenderTarget[0].BlendEnable = true;
+	omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+
+	if (FAILED(device->CreateBlendState(&omDesc, &blendState)))
+
+	deviceContext->OMSetBlendState(blendState, 0, 0xffffffff);
+
+	D3D11_RASTERIZER_DESC cmdesc;
+	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	cmdesc.FillMode = D3D11_FILL_SOLID;
+	cmdesc.CullMode = D3D11_CULL_BACK;
+
+	cmdesc.FrontCounterClockwise = true;
+	device->CreateRasterizerState(&cmdesc, &CCWcullMode);
+
+	cmdesc.FrontCounterClockwise = false;
+	device->CreateRasterizerState(&cmdesc, &CWcullMode);
 }
