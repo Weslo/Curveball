@@ -18,6 +18,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 	input.normal = normalize(input.normal);
 
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.uv);
-
+	
 	return surfaceColor;
 }

@@ -381,28 +381,30 @@ void GameManager::InitGame(Camera* cam)
 	//Order: level, 1, 2, 3, player, opponent
 	
 	//Level + level number. Limited to 1,2,3 right now because of time constraints
-	CreateUIElement(XMFLOAT3(-.1f, 1.0f, -10.5f), meshes[3], materials[4]);
-	CreateUIElement(XMFLOAT3(.2f, 1.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(-.1f, 1.2f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(.1f, 1.2f, -10.5f), meshes[3], materials[4]);
 
-	ui[0]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	XMFLOAT3 uiScale = XMFLOAT3(5.0f, 5.0f, 5.0f);
+
+	ui[0]->SetScale(uiScale);
 	ui[0]->SetRotation(XMFLOAT3(0, XM_PI, 0));
-	ui[1]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[1]->SetScale(uiScale);
 	ui[1]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	//Player + lives
-	CreateUIElement(XMFLOAT3(-1.2f, 1.0f, -10.5f), meshes[7], materials[4]);
-	CreateUIElement(XMFLOAT3(-.9f, 1.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(-1.2f, 1.2f, -10.5f), meshes[7], materials[4]);
+	CreateUIElement(XMFLOAT3(-1.0f, 1.2f, -10.5f), meshes[3], materials[4]);
 
-	ui[2]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[2]->SetScale(uiScale);
 	ui[2]->SetRotation(XMFLOAT3(0, XM_PI, 0));
-	ui[3]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[3]->SetScale(uiScale);
 	ui[3]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 	//Computer + lives
-	CreateUIElement(XMFLOAT3(.8f, 1.0f, -10.5f), meshes[8], materials[4]);
-	CreateUIElement(XMFLOAT3(1.3f, 1.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(1.1f, 1.2f, -10.5f), meshes[8], materials[4]);
+	CreateUIElement(XMFLOAT3(1.4f, 1.2f, -10.5f), meshes[3], materials[4]);
 
-	ui[4]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[4]->SetScale(uiScale);
 	ui[4]->SetRotation(XMFLOAT3(0, XM_PI, 0));
-	ui[5]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[5]->SetScale(uiScale);
 	ui[5]->SetRotation(XMFLOAT3(0, XM_PI, 0));
 
 
