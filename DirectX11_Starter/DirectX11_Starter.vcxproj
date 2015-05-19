@@ -88,6 +88,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerMaterial.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIMaterial.cpp" />
     <ClCompile Include="WallMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +113,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerMaterial.h" />
     <ClInclude Include="SimpleShader.h" />
+    <ClInclude Include="UIElement.h" />
+    <ClInclude Include="UIMaterial.h" />
     <ClInclude Include="WallMaterial.h" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +139,14 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shaders\PlayerVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shaders\UIPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shaders\UIVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
     </FxCompile>

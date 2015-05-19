@@ -15,6 +15,7 @@
 #include "GameController.h"
 #include "ParticleSystem.h"
 #include "Lighting.h"
+#include "UIElement.h"
 
 class GameManager
 {
@@ -31,10 +32,12 @@ public:
 	void CreateComputer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma);
 	void CreateBall(float r, Mesh*, Material*);
 	void CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, XMFLOAT3 u, Mesh* m, Material* ma);
+	void CreateUIElement(XMFLOAT3 pos, Mesh* m, Material* ma);
 	void CreateMesh(char* file);
 
 	//Some of these may not be used, not sure yet.
 	void CreateMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
+	void CreateUIMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreateWallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreateBallMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
 	void CreatePlayerMaterial(SimpleVertexShader* vs, SimplePixelShader* ps, ID3D11ShaderResourceView* rv, ID3D11SamplerState* ss);
@@ -58,6 +61,7 @@ public:
 	std::vector<Boundary*> GetWalls();
 	std::vector<Mesh*> GetMeshes();
 	std::vector<Material*> GetMaterials();
+	std::vector<UIElement*> GetUI();
 	ParticleSystem* GetParticleSystem();
 	std::vector<SimplePixelShader*> GetPixelShaders();
 	std::vector<SimpleVertexShader*> GetVertexShaders();
@@ -85,6 +89,7 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
 	std::vector<Lighting*> lights;
+	std::vector<UIElement*> ui;
 
 	//For drawing. This will allow us to draw all objects on a per shader basis
 	std::vector<std::vector<GameEntity*>> drawByShader;

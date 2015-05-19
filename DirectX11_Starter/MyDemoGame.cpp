@@ -127,6 +127,11 @@ void MyDemoGame::UpdateScene(float dt)
 		manager->GetGameEntities()[i]->RecalculateWorldMatrix();
 	}
 
+	//Update UI elements
+	//1 = level, 3 = player, 5 = cpu
+	manager->GetUI()[1]->SetMesh(manager->GetMeshes()[3 + manager->GetGameController()->GetLevel()]);
+	manager->GetUI()[3]->SetMesh(manager->GetMeshes()[3 + manager->GetGameController()->GetPlayerLives()]);
+	manager->GetUI()[5]->SetMesh(manager->GetMeshes()[3 + manager->GetGameController()->GetCompLives()]);
 	
 	//Update the materials with necessary stuff
 	Light lArray[8];
@@ -188,6 +193,14 @@ void MyDemoGame::DrawScene()
 			//  - Do this PER OBJECT, before drawing it
 			manager->GetDrawByShader()[i][j]->PrepareToDraw();
 			manager->GetMaterials()[i]->PrepareToDraw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+
+			//Hardcode the set shader for ui and particles
+			if (i >= 3)
+			{
+				manager->GetMaterials()[i]->GetVertexShader()->SetShader();
+				manager->GetMaterials()[i]->GetPixelShader()->SetShader();
+			}
+
 			// Draw the mesh
 			manager->GetDrawByShader()[i][j]->Draw(deviceContext);
 		}

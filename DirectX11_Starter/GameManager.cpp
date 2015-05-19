@@ -20,6 +20,8 @@ GameManager::~GameManager()
 	for (std::vector< GameEntity* >::iterator it = entities.begin(); it != entities.end(); ++it) { delete (*it); }
 	entities.clear();
 
+	
+
 	// Release the particle system.
 	particleSystem->Shutdown();
 	delete particleSystem;
@@ -71,6 +73,11 @@ std::vector<Mesh*> GameManager::GetMeshes()
 std::vector<Material*> GameManager::GetMaterials()
 {
 	return materials;
+}
+
+std::vector<UIElement*> GameManager::GetUI()
+{
+	return ui;
 }
 
 ParticleSystem* GameManager::GetParticleSystem()
@@ -244,6 +251,12 @@ void GameManager::CreateWall(int l, int w, XMFLOAT3 p, XMFLOAT3 r, XMFLOAT3 s, X
 	entities.push_back(walls[walls.size() - 1]);
 }
 
+void GameManager::CreateUIElement(XMFLOAT3 pos, Mesh* m, Material* ma)
+{
+	ui.push_back(new UIElement(pos, m, ma));
+	entities.push_back(ui[ui.size() - 1]);
+}
+
 void GameManager::CreatePlayer(XMFLOAT3 pos, float w, float h, Mesh* m, Material* ma)
 {
 	player = new Player(pos, w, h, m, ma);
@@ -305,9 +318,15 @@ void GameManager::InitGame(Camera* cam)
 	pixelShaders[3]->LoadShaderFile(L"ParticlePixelShader.cso");
 	vertexShaders[3]->LoadShaderFile(L"ParticleVertexShader.cso");
 
+	CreatePixelShader();
+	CreateVertexShader();
+	pixelShaders[4]->LoadShaderFile(L"UIPixelShader.cso");
+	vertexShaders[4]->LoadShaderFile(L"UIVertexShader.cso");
+
 	CreateResourceView(L"../Assets/wall.png");
 	CreateResourceView(L"../Assets/ballTex.png");
 	CreateResourceView(L"../Assets/paddle.png");
+	CreateResourceView(L"../Assets/uiAssets/ui.png");
 
 	//Create the sampler state.
 	//Could take U/V/W states later for more options for textures
@@ -323,11 +342,19 @@ void GameManager::InitGame(Camera* cam)
 	//paddle
 	CreatePlayerMaterial(vertexShaders[2], pixelShaders[2], resourceViews[2], samplerStates[0]);
 	// particles
-	CreateMaterial(GetVertexShaders()[3], GetPixelShaders()[3], GetResourceViews()[0], GetSamplerStates()[0]);
+	CreateMaterial(vertexShaders[3], pixelShaders[3], resourceViews[0], samplerStates[0]);
+	//UI
+	CreateMaterial(vertexShaders[4], pixelShaders[4], resourceViews[3], samplerStates[0]);
 
 	CreateMesh("../Assets/wall2.obj");
 	CreateMesh("../Assets/sphere.obj");
 	CreateMesh("../Assets/paddle.obj");
+	CreateMesh("../Assets/uiAssets/uiLevel.obj");
+	CreateMesh("../Assets/uiAssets/ui1.obj");
+	CreateMesh("../Assets/uiAssets/ui2.obj");
+	CreateMesh("../Assets/uiAssets/ui3.obj");
+	CreateMesh("../Assets/uiAssets/uiPlayer.obj");
+	CreateMesh("../Assets/uiAssets/uiOpponent.obj");
 
 	XMFLOAT3 wScale = XMFLOAT3(20.0f, 20.0f, 20.0f);
 
@@ -347,6 +374,24 @@ void GameManager::InitGame(Camera* cam)
 	CreateComputer(XMFLOAT3(0, 0, 8), 1.33f, 1, meshes[2], materials[2]);
 	computer->SetRotation(0, XM_PI / 2, 0);
 
+	//Create ui
+	//Order: level, 1, 2, 3, player, opponent
+	
+	//Level + level number. Limited to 1,2,3 right now because of time constraints
+	CreateUIElement(XMFLOAT3(-3.0f, 0.0f, -10.5f), meshes[3], materials[4]);
+	CreateUIElement(XMFLOAT3(-9.0f, 5.0f, -10.5f), meshes[3], materials[4]);
+
+	ui[0]->SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	ui[0]->SetRotation(XMFLOAT3(0, 0, 0));
+	//Player + lives
+	CreateUIElement(XMFLOAT3(-10.0f, 4.0f, -10.5f), meshes[7], materials[4]);
+	CreateUIElement(XMFLOAT3(-9.0f, 4.0f, -10.5f), meshes[3], materials[4]);
+
+	//Computer + lives
+	CreateUIElement(XMFLOAT3(-.0f, 5.0f, -10.5f), meshes[8], materials[4]);
+	CreateUIElement(XMFLOAT3(-10.0f, 5.0f, -10.5f), meshes[3], materials[4]);
+
+
 	CreateGameController(ball, player, computer, 3, 3, 1);
 
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -355,9 +400,9 @@ void GameManager::InitGame(Camera* cam)
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
-	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
-	CreateLight(2, XMFLOAT4(.15f, .15f, .15f, 1.0f), XMFLOAT4(.4f, .4f, .4f, 1.0f), 30, XMFLOAT3(0, 0, -10), XMFLOAT3(0.4f, .04f, .0004f), XMFLOAT3(0.0f, 0.0f, 1.0f), .3);
+	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(.5f, .5f, .5f), 0);
+	CreateLight(0, XMFLOAT4(.05f, .05f, .05f, 1.0f), XMFLOAT4(.1f, .1f, .1f, 1.0f), 0, XMFLOAT3(0, 0, -10.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(-.5f, -.5f, -.5f), 0);
+	CreateLight(2, XMFLOAT4(.15f, .15f, .15f, 1.0f), XMFLOAT4(.4f, .4f, .4f, 1.0f), 30, XMFLOAT3(0, 0, -10.0f), XMFLOAT3(0.4f, .04f, .0004f), XMFLOAT3(0.0f, 0.0f, 1.0f), .3);
 	CreateLight(1, XMFLOAT4(.2f, 0.0f, 0.0f, 1.0f), XMFLOAT4(0.7f, 0.0f, 0.0f, 1.0f), 0, ball->GetPosition(), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0), 0);
 
 	ball->SetBallLight(lights[lights.size() - 1]);
