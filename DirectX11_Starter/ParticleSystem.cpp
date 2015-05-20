@@ -292,13 +292,102 @@ void ParticleSystem::ShutdownBuffers()
 	vertices = 0;
 }
 
+// Emits a burst of numParticles particles at position pos.
+void ParticleSystem::BurstEmitParticles(int numParticles, XMFLOAT3 pos)
+{
+	int i;
+
+	for (i = 0; i < numParticles; i++)
+	{
+		if (currentParticleCount < (maxParticles - 1))
+		{
+			BurstEmitSingleParticle(pos);
+		}
+	}
+}
+
+// Emits a single particle at position pos.
+void ParticleSystem::BurstEmitSingleParticle(XMFLOAT3 pos)
+{
+	float _x, _y, _z, _velocity, _r, _g, _b;
+	int i, j, index;
+	bool found;
+
+	// Increment particle count.
+	currentParticleCount++;
+
+	// Generate randomized particle properties.
+	_x = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationX;
+	_y = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationY;
+	_z = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationZ;
+
+	_velocity = particleVelocity + (((float)rand() - (float)rand()) / RAND_MAX) * particleVelocityVariation;
+
+	_r = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
+	_g = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
+	_b = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
+
+	// Position the new particle relative to the emitter.
+	_x += pos.x;
+	_y += pos.y;
+	_z += pos.z;
+
+	// Sort the new particle by depth.
+	index = 0;
+	found = false;
+	while (!found)
+	{
+		// If the particle we are inspecting is inactive or it's z coord is less
+		// than the incoming one, we've found our location.
+		if ((particles[index].active == false) || (particles[index].z < _z))
+		{
+			found = true;
+		}
+		else
+		{
+			// Otherwise check the next index.
+			index++;
+		}
+	}
+
+	// Now that we've found the correct index for this new particle, we
+	// need to make room by copying the array over one position and inserting
+	// data for the new particle.
+	i = currentParticleCount;
+	j = i - 1;
+
+	// Copy data over one index.
+	while (i != index)
+	{
+		particles[i].x = particles[j].x;
+		particles[i].y = particles[j].y;
+		particles[i].z = particles[j].z;
+		particles[i].r = particles[j].r;
+		particles[i].g = particles[j].g;
+		particles[i].b = particles[j].b;
+		particles[i].velocity = particles[j].velocity;
+		particles[i].active = particles[j].active;
+
+		i--;
+		j--;
+	}
+
+	// Insert new particle data at the correct index.
+	particles[index].x = _x;
+	particles[index].y = _y;
+	particles[index].z = _z;
+	particles[index].r = _r;
+	particles[index].g = _g;
+	particles[index].b = _b;
+	particles[index].velocity = _velocity;
+	particles[index].active = true;
+}
+
 // Called each frame to emit new particles based on the change in time between the previous and
 // new frames. Ensures the proper number of particles are emitted and properly sorted by depth.
 void ParticleSystem::EmitParticles(float dt)
 {
-	bool emitParticle, found;
-	float _x, _y, _z, _velocity, _r, _g, _b;
-	int index, i, j;
+	bool emitParticle;
 
 	// Increment accumulated time.
 	accumulatedTime += dt;
@@ -316,74 +405,7 @@ void ParticleSystem::EmitParticles(float dt)
 	// If there are particles to emit, then emit one per frame.
 	if ((emitParticle == true) && (currentParticleCount < (maxParticles - 1)))
 	{
-		// Increment particle count.
-		currentParticleCount++;
-
-		// Generate randomized particle properties.
-		_x = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationX;
-		_y = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationY;
-		_z = (((float)rand() - (float)rand()) / RAND_MAX) * particleDeviationZ;
-
-		_velocity = particleVelocity + (((float)rand() - (float)rand()) / RAND_MAX) * particleVelocityVariation;
-
-		_r = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
-		_g = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
-		_b = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
-
-		// Position the new particle relative to the emitter.
-		_x += emitterPosition.x;
-		_y += emitterPosition.y;
-		_z += emitterPosition.z;
-
-		// Sort the new particle by depth.
-		index = 0;
-		found = false;
-		while (!found)
-		{
-			// If the particle we are inspecting is inactive or it's z coord is less
-			// than the incoming one, we've found our location.
-			if ((particles[index].active == false) || (particles[index].z < _z))
-			{
-				found = true;
-			}
-			else
-			{
-				// Otherwise check the next index.
-				index++;
-			}
-		}
-
-		// Now that we've found the correct index for this new particle, we
-		// need to make room by copying the array over one position and inserting
-		// data for the new particle.
-		i = currentParticleCount;
-		j = i - 1;
-
-		// Copy data over one index.
-		while (i != index)
-		{
-			particles[i].x = particles[j].x;
-			particles[i].y = particles[j].y;
-			particles[i].z = particles[j].z;
-			particles[i].r = particles[j].r;
-			particles[i].g = particles[j].g;
-			particles[i].b = particles[j].b;
-			particles[i].velocity = particles[j].velocity;
-			particles[i].active = particles[j].active;
-
-			i--;
-			j--;
-		}
-
-		// Insert new particle data at the correct index.
-		particles[index].x = _x;
-		particles[index].y = _y;
-		particles[index].z = _z;
-		particles[index].r = _r;
-		particles[index].g = _g;
-		particles[index].b = _b;
-		particles[index].velocity = _velocity;
-		particles[index].active = true;
+		BurstEmitSingleParticle(emitterPosition);
 	}
 }
 
@@ -426,6 +448,19 @@ void ParticleSystem::KillParticles()
 			}
 		}
 	}
+}
+
+// Immediately kills all living particles.
+void ParticleSystem::KillAllParticles()
+{
+	int i;
+
+	// Kill all the particles ever.
+	for (i = 0; i < maxParticles; i++)
+	{
+		particles[i].active = false;
+	}
+	currentParticleCount = 0;
 }
 
 // Updates the dynamic vertex buffer each frame.

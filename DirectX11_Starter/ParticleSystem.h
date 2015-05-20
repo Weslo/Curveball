@@ -41,6 +41,8 @@ public:
 	XMFLOAT4X4 GetWorldMatrix();
 	void SetEmitterEnabled(bool _enabled);
 	void SetEmitterPosition(XMFLOAT3 pos);
+	void KillAllParticles();
+	void BurstEmitParticles(int numParticles, XMFLOAT3 position);
 
 private:
 
@@ -53,6 +55,8 @@ private:
 	void EmitParticles(float dt);
 	void UpdateParticles(float dt);
 	void KillParticles();
+
+	void BurstEmitSingleParticle(XMFLOAT3 position);
 
 	bool UpdateBuffers(ID3D11DeviceContext* deviceContext);
 

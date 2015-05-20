@@ -344,6 +344,10 @@ void Collisions::ReflectBallPlayer(Ball* b, Player* p, XMFLOAT3 maxSpeed, XMFLOA
 	b->SetAngularVelocity(XMFLOAT3(newAVel.x, newAVel.y, 0));
 	p->ResetPrevPos();
 	b->RandomizeBallLight();
+
+	XMFLOAT3 collisionPos = { b->GetPosition().x, b->GetPosition().y, b->GetPosition().z - b->GetRadius() };
+
+	b->GetParticleSystem()->BurstEmitParticles(50, collisionPos);
 }
 
 //Reflect the ball when a collision is found
